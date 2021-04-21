@@ -61,6 +61,8 @@ void leitura(Modelo &modelo){
 }
 
 int main(void){
+    vector <double> solucaoVariaveisBasicas, solucaoVariaveisNaoBasicas;
+    vector <int> indicesVariaveisBasicas, indicesVariaveisNaoBasicas;
     bool verificacao = false;
 
     Modelo modelo;
@@ -79,23 +81,21 @@ int main(void){
     modeloPadrao.printFuncaoObjetivo();
     modeloPadrao.printRestricoes();
 
-    modeloPadrao.setTableau();
-
     while(!verificacao){
         verificacao = modeloPadrao.verificacaoSolucao();
     }
 
-    modeloPadrao.setVariaveisBasicas();
-
     cout << "Valor ótimo: " << modeloPadrao.getValorOtimo() << endl;
-    vector <double> solucaoOtima = modeloPadrao.getSolucaoOtima();
+    modeloPadrao.getSolucaoOtima(solucaoVariaveisBasicas, solucaoVariaveisNaoBasicas, indicesVariaveisBasicas, indicesVariaveisNaoBasicas);
 
-    /*
-    for(int i = 0; i < solucaoOtima.size(); i++){
-        cout << solucaoOtima[i] << " " << endl;
-        cout << "oi";
+    cout << "Solução ótima: " << endl;
+    for(int i = 0; i < solucaoVariaveisBasicas.size(); i++){
+        cout << "\tx_" << indicesVariaveisBasicas[i] << ": " << solucaoVariaveisBasicas[i] << endl;
     }
-    */
+
+    for(int i = 0; i < solucaoVariaveisNaoBasicas.size(); i++){
+        cout << "\tx_" << indicesVariaveisNaoBasicas[i] << ": " << solucaoVariaveisNaoBasicas[i] << endl;
+    }
 
     cout << endl;
 

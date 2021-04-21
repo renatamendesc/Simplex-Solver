@@ -11,10 +11,10 @@ class FormaPadrao {
 
     public:
         double getValorOtimo();
-        vector <double> getSolucaoOtima();
+        void getSolucaoOtima(vector <double> &, vector <double> &, vector <int> &, vector <int> &);
 
         void setTableau();
-        void setVariaveisBasicas();
+        void setVariaveisBasicas(int, int);
 
         void printTableau();
         void printFuncaoObjetivo();
