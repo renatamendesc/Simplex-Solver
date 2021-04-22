@@ -36,6 +36,31 @@ void Modelo::setRestricoes(string relacao, double segundoMembro, vector <double>
     this->restricoes.push_back(restricao);
 }
 
+void Modelo::verificaNegatividade(){
+
+    for(int i = 0; i < restricoes.size(); i++){
+
+        // Multiplica restrição que o lado direito for negativo:
+        if(restricoes[i].getSegundoMembro() < 0){
+            cout << "entrei no if" << endl;
+
+            // Percorre variáveis da restrição:
+            for(int j = 0; j < restricoes[i].getVariaveis().size(); j++){
+                
+                restricoes[i].inverteCoeficiente(j);
+                
+                cout << restricoes[i].getVariaveis()[j].getCoeficiente() << endl; 
+            }
+
+            restricoes[i].setRelacao("<=");
+
+            restricoes[i].setSegundoMembro(-(restricoes[i].getSegundoMembro()));
+            
+            cout << restricoes[i].getSegundoMembro() << endl;
+        }
+    }
+}
+
 void Modelo::printFuncaoObjetivo(){
 
     cout << "\nFunção Objetivo: " << this->funcaoObjetivo.getTipo() << " Z = ";

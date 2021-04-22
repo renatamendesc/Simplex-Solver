@@ -6,7 +6,7 @@ class Variaveis {
     public:
         void setIndice(int);
         void setCoeficiente(double);
-
+        
         int getIndice();
         double getCoeficiente();
 

@@ -19,6 +19,25 @@ void Restricoes::setVariaveis(vector <double> coeficientes){
     }
 }
 
+void Restricoes::setVariaveisFolgas(int restricao, int coef, int variavel){
+    
+    this->variaveisFolgas.setIndice(variavel);
+    this->variaveisFolgas.setCoeficiente(coef);
+    
+}
+
+void Restricoes::setVariaveisArtificiais(int restricao, int coef, int variavel){
+
+    this->variaveisArtificiais.setIndice(variavel);
+    this->variaveisArtificiais.setCoeficiente(coef);
+
+}
+
+void Restricoes::inverteCoeficiente(int indice){
+    this->variaveis[indice].setCoeficiente(-(this->variaveis[indice].getCoeficiente()));
+}
+
+
 void Restricoes::setSegundoMembro(double segundoMembro){
     this->segundoMembro = segundoMembro;
 }
@@ -33,4 +52,11 @@ string Restricoes::getRelacao(){
 
 double Restricoes::getSegundoMembro(){
     return this->segundoMembro;
+}
+
+Variaveis Restricoes::getVariaveisFolgas(){
+    return this->variaveisFolgas;
+}
+Variaveis Restricoes::getVariaveisArtificiais(){
+    return this->variaveisArtificiais;
 }

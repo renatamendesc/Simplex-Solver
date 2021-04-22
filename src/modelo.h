@@ -16,6 +16,8 @@ class Modelo {
         void setFuncaoObjetivo(string, vector <double>);
         void setRestricoes(string, double, vector <double>);
 
+        void verificaNegatividade();
+
         FuncaoObjetivo getFuncaoObjetivo();
         vector <Restricoes> getRestricoes();
 

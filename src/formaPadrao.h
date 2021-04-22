@@ -2,6 +2,8 @@
 #define FORMA_PADRAO_H
 
 #include "funcaoObjetivo.h"
+#include "variaveisAdicionadas.h"
+#include "variaveisAdicionadas.cpp"
 #include "restricoes.h"
 #include "modelo.h"
 #include <iostream>
@@ -37,6 +39,7 @@ class FormaPadrao {
         vector <vector<double>> tableau;
 
         int numeroFolgas = 0;
+        int numeroArtificiais = 0;
 };
 
 #endif

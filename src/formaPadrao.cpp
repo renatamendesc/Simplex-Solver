@@ -8,86 +8,113 @@ using namespace std;
 
 FormaPadrao::FormaPadrao(Modelo formaOriginal){
     vector <double> coeficientes;
+    vector <VariaveisAdicionadas> outrasVariaveis;
+    VariaveisAdicionadas novaVariavel;
     Restricoes restricao;
 
-    // Analisa variáveis da função objetivo do modelo original:
-    for(int i = 0; i < formaOriginal.getFuncaoObjetivo().getVariaveis().size(); i++){
-        coeficientes.push_back(formaOriginal.getFuncaoObjetivo().getVariaveis()[i].getCoeficiente());
-        this->variaveisNaoBasicas.push_back(i+1);
-    }
-
+    // Verifica se há alguma restrição com segundo membro negativo:
+    formaOriginal.verificaNegatividade();
+    
+    // Analisa restrições:
     for(int i = 0; i < formaOriginal.getRestricoes().size(); i++){
+        int somador = 0;
 
-        // Multiplica restrição que o lado direito for negativo:
-        if(formaOriginal.getRestricoes()[i].getSegundoMembro() < 0){
-            cout << "entrei no if" << endl;
+        if(formaOriginal.getRestricoes()[i].getRelacao() == "<="){
+            novaVariavel.setIndice(i + formaOriginal.getFuncaoObjetivo().getVariaveis().size() + somador + 1);
+            novaVariavel.setCoeficiente(1);
+            novaVariavel.setTipo("Folga");
+            novaVariavel.setRestricao(i+1);
 
-            // Percorre variáveis da restrição:
-            for(int j = 0; j < formaOriginal.getRestricoes()[i].getVariaveis().size(); j++){
-                double a = -(formaOriginal.getRestricoes()[i].getVariaveis()[j].getCoeficiente());
-                
-                formaOriginal.getRestricoes()[i].getVariaveis()[j].setCoeficiente(a);
-                
-                cout << formaOriginal.getRestricoes()[i].getVariaveis()[j].getCoeficiente() << endl; 
-            }
-
-            formaOriginal.getRestricoes()[i].setRelacao("<=");
-
-            cout << formaOriginal.getRestricoes()[i].getRelacao() << endl;
-
-            formaOriginal.getRestricoes()[i].setSegundoMembro(-(formaOriginal.getRestricoes()[i].getSegundoMembro()));
-            
-            cout << formaOriginal.getRestricoes()[i].getSegundoMembro() << endl;
-        }
-    }
-
-    // Analisa restrições do modelo original:
-    for(int i = 0; i < formaOriginal.getRestricoes().size(); i++){
-
-        // Conta quantas variáveis de folga serão adicionadas:
-        if(formaOriginal.getRestricoes()[i].getRelacao() == "<=" || formaOriginal.getRestricoes()[i].getRelacao() == ">="){
-            coeficientes.push_back(0);
             this->numeroFolgas++;
-        }
 
-        this->variaveisBasicas.push_back(i+formaOriginal.getFuncaoObjetivo().getVariaveis().size()+1);
+            outrasVariaveis.push_back(novaVariavel);
+
+        }else if(formaOriginal.getRestricoes()[i].getRelacao() == "="){
+            novaVariavel.setIndice(i + formaOriginal.getFuncaoObjetivo().getVariaveis().size() + somador + 1);
+            novaVariavel.setCoeficiente(1);
+            novaVariavel.setTipo("Artificial");
+            novaVariavel.setRestricao(i+1);
+
+            this->numeroArtificiais++;
+
+            outrasVariaveis.push_back(novaVariavel);
+
+        }else if(formaOriginal.getRestricoes()[i].getRelacao() == ">="){
+            novaVariavel.setIndice(i + formaOriginal.getFuncaoObjetivo().getVariaveis().size() + somador + 1);
+            novaVariavel.setCoeficiente(-1);
+            novaVariavel.setTipo("Folga");
+            novaVariavel.setRestricao(i+1);
+
+            this->numeroFolgas++;
+
+            outrasVariaveis.push_back(novaVariavel);
+
+            somador++;
+            novaVariavel.setIndice(i + formaOriginal.getFuncaoObjetivo().getVariaveis().size() + somador + 1);
+            novaVariavel.setCoeficiente(-1);
+            novaVariavel.setTipo("Artificial");
+            novaVariavel.setRestricao(i+1);
+
+            this->numeroArtificiais++;
+
+            outrasVariaveis.push_back(novaVariavel);
+        }
     }
 
-    // Adiciona variaveis de folga na função objetivo(Forma padrão):
-    this->funcaoObjetivo.setVariaveis(coeficientes);
+    for(int i = 0; formaOriginal.getFuncaoObjetivo().getVariaveis().size() + numeroArtificiais + numeroFolgas; i++){
+        if(i < formaOriginal.getFuncaoObjetivo().getVariaveis().size()){
+            coeficientes.push_back(formaOriginal.getFuncaoObjetivo().getVariaveis()[i].getCoeficiente());
+            this->variaveisNaoBasicas.push_back(i+1);
+
+        }else {
+            coeficientes.push_back(formaOriginal.getFuncaoObjetivo().getVariaveis()[i].getCoeficiente());
+        }
+    }
+
     this->funcaoObjetivo.setTipo(formaOriginal.getFuncaoObjetivo().getTipo());
+    this->funcaoObjetivo.setSegundoMembro(formaOriginal.getFuncaoObjetivo().getSegundoMembro());
+    this->funcaoObjetivo.setVariaveis(coeficientes);
 
     coeficientes.clear();
 
-    // Analisa restrições do modelo original:
+    if(this->numeroArtificiais == 0){
+        for(int i = 0; i < this->numeroFolgas; i++){
+            this->variaveisBasicas.push_back(outrasVariaveis[i].getIndice());
+        }
+
+    } else {
+        for(int i = 0; i < outrasVariaveis.size(); i++){
+            if(outrasVariaveis[i].getTipo() == "Folga"){
+               this->variaveisNaoBasicas.push_back(outrasVariaveis[i].getIndice()); 
+            }else if(outrasVariaveis[i].getTipo() == "Artificial"){
+                this->variaveisBasicas.push_back(outrasVariaveis[i].getIndice()); 
+            }
+        }
+    }
+
     for(int i = 0; i < formaOriginal.getRestricoes().size(); i++){
 
-        // Analisa coeficientes das variaveis das restrições:
         for(int j = 0; j < formaOriginal.getRestricoes()[i].getVariaveis().size(); j++){
             coeficientes.push_back(formaOriginal.getRestricoes()[i].getVariaveis()[j].getCoeficiente());
         }
 
-        // Adiciona variáveis de folga:
-        for(int j = 0; j < numeroFolgas; j++){
-            if((formaOriginal.getRestricoes()[i].getRelacao() == "<=") && (j == i)){
-                coeficientes.push_back(1);
-            }else if((formaOriginal.getRestricoes()[i].getRelacao() == ">=") && (j == i)){
-                coeficientes.push_back(-1);
+        for(int j = 0; j < outrasVariaveis.size(); j++){
+            if(i == outrasVariaveis[j].getRestricao()){
+                coeficientes.push_back(outrasVariaveis[j].getIndice());
             }else{
                 coeficientes.push_back(0);
             }
         }
 
-    // Adiciona variaveis de folga nas restrições (Forma padrão):
-    restricao.setVariaveis(coeficientes);
-    restricao.setRelacao(formaOriginal.getRestricoes()[i].getRelacao());
-    restricao.setSegundoMembro(formaOriginal.getRestricoes()[i].getSegundoMembro());
+        restricao.setRelacao(formaOriginal.getRestricoes()[i].getRelacao());
+        restricao.setSegundoMembro(formaOriginal.getRestricoes()[i].getSegundoMembro());
+        restricao.setVariaveis(coeficientes);
 
-    this->restricoes.push_back(restricao);
-    coeficientes.clear();
+        this->restricoes.push_back(restricao);
 
+        coeficientes.clear();
     }
-
+    
     this->setTableau();
 }
 
@@ -177,7 +204,7 @@ bool FormaPadrao::verificacaoSolucao(){
     while(true){
         contador++;
 
-        this->printTableau();
+        //this->printTableau();
 
         double menor = DBL_MAX;
         int colunaPivo;
@@ -290,7 +317,7 @@ void FormaPadrao::printRestricoes(){
             }
         }
 
-        cout << " " << this->restricoes[i].getRelacao() << " " << this->restricoes[i].getSegundoMembro() << endl;   
+        cout << " = " << this->restricoes[i].getSegundoMembro() << endl;   
     }
 
     cout << endl;
