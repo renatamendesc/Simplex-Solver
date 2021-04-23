@@ -15,7 +15,7 @@ class FormaPadrao {
         double getValorOtimo();
         void getSolucaoOtima(vector <double> &, vector <double> &, vector <int> &, vector <int> &);
 
-        void setTableau();
+        void setTableau(bool);
         void setVariaveisBasicas(int, int);
 
         void printTableau();

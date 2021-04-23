@@ -11,6 +11,7 @@ FormaPadrao::FormaPadrao(Modelo formaOriginal){
     vector <VariaveisAdicionadas> outrasVariaveis;
     VariaveisAdicionadas novaVariavel;
     Restricoes restricao;
+    bool duasFases = false;
 
     // Verifica se há alguma restrição com segundo membro negativo:
     formaOriginal.verificaNegatividade();
@@ -39,6 +40,8 @@ FormaPadrao::FormaPadrao(Modelo formaOriginal){
 
             outrasVariaveis.push_back(novaVariavel);
 
+            duasFases = true;
+
         }else if(formaOriginal.getRestricoes()[i].getRelacao() == ">="){
             novaVariavel.setIndice(i + formaOriginal.getFuncaoObjetivo().getVariaveis().size() + somador + 1);
             novaVariavel.setCoeficiente(-1);
@@ -51,23 +54,26 @@ FormaPadrao::FormaPadrao(Modelo formaOriginal){
 
             somador++;
             novaVariavel.setIndice(i + formaOriginal.getFuncaoObjetivo().getVariaveis().size() + somador + 1);
-            novaVariavel.setCoeficiente(-1);
+            novaVariavel.setCoeficiente(1);
             novaVariavel.setTipo("Artificial");
             novaVariavel.setRestricao(i+1);
 
             this->numeroArtificiais++;
 
             outrasVariaveis.push_back(novaVariavel);
+
+            duasFases = true;
         }
     }
 
-    for(int i = 0; formaOriginal.getFuncaoObjetivo().getVariaveis().size() + numeroArtificiais + numeroFolgas; i++){
+    for(int i = 0; i < formaOriginal.getFuncaoObjetivo().getVariaveis().size() + numeroArtificiais + numeroFolgas; i++){
+ 
         if(i < formaOriginal.getFuncaoObjetivo().getVariaveis().size()){
             coeficientes.push_back(formaOriginal.getFuncaoObjetivo().getVariaveis()[i].getCoeficiente());
             this->variaveisNaoBasicas.push_back(i+1);
 
         }else {
-            coeficientes.push_back(formaOriginal.getFuncaoObjetivo().getVariaveis()[i].getCoeficiente());
+            coeficientes.push_back(0);
         }
     }
 
@@ -99,8 +105,8 @@ FormaPadrao::FormaPadrao(Modelo formaOriginal){
         }
 
         for(int j = 0; j < outrasVariaveis.size(); j++){
-            if(i == outrasVariaveis[j].getRestricao()){
-                coeficientes.push_back(outrasVariaveis[j].getIndice());
+            if(i == outrasVariaveis[j].getRestricao()-1){
+                coeficientes.push_back(outrasVariaveis[j].getCoeficiente());
             }else{
                 coeficientes.push_back(0);
             }
@@ -115,27 +121,76 @@ FormaPadrao::FormaPadrao(Modelo formaOriginal){
         coeficientes.clear();
     }
     
-    this->setTableau();
+    this->setTableau(duasFases);
 }
 
-void FormaPadrao::setTableau(){
+void FormaPadrao::setTableau(bool duasFases){
     vector <double> linha;
+    vector <Restricoes> restricaoSoma;
+    vector <double> coeficientesSoma;
+    Restricoes resultante;
 
-    // Adiciona primeira linha (Referente a função objetivo):
-    for(int i = 0; i <= this->funcaoObjetivo.getVariaveis().size(); i++){
-        if(i == this->funcaoObjetivo.getVariaveis().size()){
-            linha.push_back(0);
+    if(duasFases){
+        for(int i = 0; i < this->restricoes.size(); i++){
+            if(this->restricoes[i].getRelacao() == "=" || this->restricoes[i].getRelacao() == ">="){
+                restricaoSoma.push_back(this->restricoes[i]);
+            }
+        }
 
-        }else if(funcaoObjetivo.getTipo() == "Max" && funcaoObjetivo.getVariaveis()[i].getCoeficiente() != 0){
-            linha.push_back(-(funcaoObjetivo.getVariaveis()[i].getCoeficiente()));
+        for(int i = 0; i <= restricaoSoma[0].getVariaveis().size(); i++){
+            double elemento = 0;
 
-        }else if(funcaoObjetivo.getTipo() == "Min" || funcaoObjetivo.getVariaveis()[i].getCoeficiente() == 0){
-            linha.push_back(funcaoObjetivo.getVariaveis()[i].getCoeficiente()); 
+            for(int j = 0; j < restricaoSoma.size(); j++){ 
+
+                if(i == restricaoSoma[0].getVariaveis().size()){
+                    elemento += restricaoSoma[j].getSegundoMembro();
+                }else{
+                    elemento += restricaoSoma[j].getVariaveis()[i].getCoeficiente();
+                }
+                
+            }
+
+            if(elemento == 0){
+                coeficientesSoma.push_back(elemento);
+            }else{
+                coeficientesSoma.push_back(-elemento);
+            }
+            
+        }
+
+        for(int i = 0; i < restricaoSoma.size(); i++){
+            for(int j = 0; j < restricaoSoma[i].getVariaveis().size(); j++){
+                for(int k = 0; k < variaveisBasicas.size(); k++){
+                    if(restricaoSoma[i].getVariaveis()[j].getIndice() == variaveisBasicas[k]){
+                        coeficientesSoma[j] = 0;
+                    }
+                }
+            }
+        }
+
+        for(int i = 0; i < coeficientesSoma.size(); i++){
+            linha.push_back(coeficientesSoma[i]);
+        }
+        
+    }else{
+
+        // Adiciona primeira linha (Referente a função objetivo):
+        for(int i = 0; i <= this->funcaoObjetivo.getVariaveis().size(); i++){
+            if(i == this->funcaoObjetivo.getVariaveis().size()){
+                linha.push_back(0);
+
+            }else if(funcaoObjetivo.getTipo() == "Max" && funcaoObjetivo.getVariaveis()[i].getCoeficiente() != 0){
+                linha.push_back(-(funcaoObjetivo.getVariaveis()[i].getCoeficiente()));
+
+            }else if(funcaoObjetivo.getTipo() == "Min" || funcaoObjetivo.getVariaveis()[i].getCoeficiente() == 0){
+                linha.push_back(funcaoObjetivo.getVariaveis()[i].getCoeficiente()); 
+            }
         }
     }
 
     // Adiciona linha ao tableau:
     this->tableau.push_back(linha);
+    coeficientesSoma.clear();
     linha.clear();
 
     // Adiciona linhas referentes as restrições:
@@ -204,24 +259,25 @@ bool FormaPadrao::verificacaoSolucao(){
     while(true){
         contador++;
 
-        //this->printTableau();
+        this->printTableau();
 
         double menor = DBL_MAX;
         int colunaPivo;
 
         // Verifica qual o menor elemento:
-        for(int i = 0; i < tableau[0].size(); i++){
+        for(int i = 0; i < tableau[0].size()-1; i++){
+            cout << "Menor: " << menor << endl;
+            cout << "Coluna: " << colunaPivo << endl;
             if(tableau[0][i] < menor){
+                cout << "entrei no if" << endl;
                 menor = tableau[0][i];
                 colunaPivo = i;
             }
         }
 
-
         // Verifica se o menor elemento é negativo:
         if(menor < 0){
             this->defineNovaBase(colunaPivo);
-            continue;
         } else {
             return true;
         }
@@ -247,12 +303,16 @@ void FormaPadrao::defineNovaBase(int colunaPivo){
         }
     }
 
+    cout << "Coluna pivo: " << colunaPivo << endl;
+    cout << "Linha pivo: " << linhaPivo << endl;
+
+    //cout << "Linha pivo: " << linhaPivo << endl;
     this->atualizaTableau(colunaPivo, linhaPivo);
     this->setVariaveisBasicas(colunaPivo, linhaPivo);
 }
 
 void FormaPadrao::atualizaTableau(int colunaPivo, int linhaPivo){
-    int elementoPivo = this->tableau[linhaPivo][colunaPivo];
+    double elementoPivo = this->tableau[linhaPivo][colunaPivo];
 
     // Atualiza nova linha pivô:
     for(int i = 0; i < this->tableau[linhaPivo].size(); i++){
