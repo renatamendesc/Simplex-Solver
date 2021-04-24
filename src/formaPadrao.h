@@ -15,8 +15,9 @@ class FormaPadrao {
         double getValorOtimo();
         void getSolucaoOtima(vector <double> &, vector <double> &, vector <int> &, vector <int> &);
 
-        void setTableau(bool);
+        void setTableau();
         void setVariaveisBasicas(int, int);
+        void setSegundaFase();
 
         void printTableau();
         void printFuncaoObjetivo();
@@ -27,6 +28,8 @@ class FormaPadrao {
         void defineNovaBase(int);
         void atualizaTableau(int, int);
 
+        bool comparaDouble(double a, double b);
+
         FormaPadrao(Modelo);
 
     private:
@@ -35,8 +38,12 @@ class FormaPadrao {
 
         vector <int> variaveisBasicas;
         vector <int> variaveisNaoBasicas;
+        vector <VariaveisAdicionadas> outrasVariaveis;
 
         vector <vector<double>> tableau;
+
+        bool duasFases = false;
+        bool segundaFase = false;
 
         int numeroFolgas = 0;
         int numeroArtificiais = 0;

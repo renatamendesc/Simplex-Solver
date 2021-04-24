@@ -8,10 +8,8 @@ using namespace std;
 
 FormaPadrao::FormaPadrao(Modelo formaOriginal){
     vector <double> coeficientes;
-    vector <VariaveisAdicionadas> outrasVariaveis;
     VariaveisAdicionadas novaVariavel;
     Restricoes restricao;
-    bool duasFases = false;
 
     // Verifica se há alguma restrição com segundo membro negativo:
     formaOriginal.verificaNegatividade();
@@ -28,7 +26,7 @@ FormaPadrao::FormaPadrao(Modelo formaOriginal){
 
             this->numeroFolgas++;
 
-            outrasVariaveis.push_back(novaVariavel);
+            this->outrasVariaveis.push_back(novaVariavel);
 
         }else if(formaOriginal.getRestricoes()[i].getRelacao() == "="){
             novaVariavel.setIndice(i + formaOriginal.getFuncaoObjetivo().getVariaveis().size() + somador + 1);
@@ -38,9 +36,9 @@ FormaPadrao::FormaPadrao(Modelo formaOriginal){
 
             this->numeroArtificiais++;
 
-            outrasVariaveis.push_back(novaVariavel);
+            this->outrasVariaveis.push_back(novaVariavel);
 
-            duasFases = true;
+            this->duasFases = true;
 
         }else if(formaOriginal.getRestricoes()[i].getRelacao() == ">="){
             novaVariavel.setIndice(i + formaOriginal.getFuncaoObjetivo().getVariaveis().size() + somador + 1);
@@ -50,7 +48,7 @@ FormaPadrao::FormaPadrao(Modelo formaOriginal){
 
             this->numeroFolgas++;
 
-            outrasVariaveis.push_back(novaVariavel);
+            this->outrasVariaveis.push_back(novaVariavel);
 
             somador++;
             novaVariavel.setIndice(i + formaOriginal.getFuncaoObjetivo().getVariaveis().size() + somador + 1);
@@ -60,9 +58,9 @@ FormaPadrao::FormaPadrao(Modelo formaOriginal){
 
             this->numeroArtificiais++;
 
-            outrasVariaveis.push_back(novaVariavel);
+            this->outrasVariaveis.push_back(novaVariavel);
 
-            duasFases = true;
+            this->duasFases = true;
         }
     }
 
@@ -85,16 +83,17 @@ FormaPadrao::FormaPadrao(Modelo formaOriginal){
 
     if(this->numeroArtificiais == 0){
         for(int i = 0; i < this->numeroFolgas; i++){
-            this->variaveisBasicas.push_back(outrasVariaveis[i].getIndice());
+            this->variaveisBasicas.push_back(this->outrasVariaveis[i].getIndice());
         }
 
     } else {
-        for(int i = 0; i < outrasVariaveis.size(); i++){
-            if(outrasVariaveis[i].getTipo() == "Folga"){
-               this->variaveisNaoBasicas.push_back(outrasVariaveis[i].getIndice()); 
-            }else if(outrasVariaveis[i].getTipo() == "Artificial"){
-                this->variaveisBasicas.push_back(outrasVariaveis[i].getIndice()); 
-            }
+
+        for(int i = 0; i < this->outrasVariaveis.size(); i++){
+            if(this->outrasVariaveis[i].getCoeficiente() == -1){
+                this->variaveisNaoBasicas.push_back(this->outrasVariaveis[i].getIndice()); 
+            }else{
+                 this->variaveisBasicas.push_back(this->outrasVariaveis[i].getIndice());
+            } 
         }
     }
 
@@ -104,9 +103,9 @@ FormaPadrao::FormaPadrao(Modelo formaOriginal){
             coeficientes.push_back(formaOriginal.getRestricoes()[i].getVariaveis()[j].getCoeficiente());
         }
 
-        for(int j = 0; j < outrasVariaveis.size(); j++){
-            if(i == outrasVariaveis[j].getRestricao()-1){
-                coeficientes.push_back(outrasVariaveis[j].getCoeficiente());
+        for(int j = 0; j < this->outrasVariaveis.size(); j++){
+            if(i == this->outrasVariaveis[j].getRestricao()-1){
+                coeficientes.push_back(this->outrasVariaveis[j].getCoeficiente());
             }else{
                 coeficientes.push_back(0);
             }
@@ -121,16 +120,49 @@ FormaPadrao::FormaPadrao(Modelo formaOriginal){
         coeficientes.clear();
     }
     
-    this->setTableau(duasFases);
+    this->setTableau();
 }
 
-void FormaPadrao::setTableau(bool duasFases){
+void FormaPadrao::setTableau(){
     vector <double> linha;
     vector <Restricoes> restricaoSoma;
     vector <double> coeficientesSoma;
     Restricoes resultante;
 
-    if(duasFases){
+
+    // Adiciona primeira linha (Referente a função objetivo):
+    for(int i = 0; i <= this->funcaoObjetivo.getVariaveis().size(); i++){
+        if(i == this->funcaoObjetivo.getVariaveis().size()){
+            linha.push_back(0);
+
+        }else if(funcaoObjetivo.getTipo() == "Max" && funcaoObjetivo.getVariaveis()[i].getCoeficiente() != 0){
+            linha.push_back(-(funcaoObjetivo.getVariaveis()[i].getCoeficiente()));
+
+        }else if(funcaoObjetivo.getTipo() == "Min" || funcaoObjetivo.getVariaveis()[i].getCoeficiente() == 0){
+            linha.push_back(funcaoObjetivo.getVariaveis()[i].getCoeficiente()); 
+        }
+    }
+
+    // Adiciona linha ao tableau:
+    this->tableau.push_back(linha);
+    linha.clear();
+
+    // Adiciona linhas referentes as restrições:
+    for(int i = 0; i < this->restricoes.size(); i++){
+        for(int j = 0; j <= this->restricoes[i].getVariaveis().size(); j++){
+            if(j == this->restricoes[i].getVariaveis().size()){
+                linha.push_back(this->restricoes[i].getSegundoMembro());
+            } else {
+                linha.push_back(this->restricoes[i].getVariaveis()[j].getCoeficiente());
+            }
+        }
+
+        // Adiciona linha ao tableau:
+        this->tableau.push_back(linha);
+        linha.clear();
+    }
+
+    if(this->duasFases){
         for(int i = 0; i < this->restricoes.size(); i++){
             if(this->restricoes[i].getRelacao() == "=" || this->restricoes[i].getRelacao() == ">="){
                 restricaoSoma.push_back(this->restricoes[i]);
@@ -171,40 +203,10 @@ void FormaPadrao::setTableau(bool duasFases){
         for(int i = 0; i < coeficientesSoma.size(); i++){
             linha.push_back(coeficientesSoma[i]);
         }
-        
-    }else{
-
-        // Adiciona primeira linha (Referente a função objetivo):
-        for(int i = 0; i <= this->funcaoObjetivo.getVariaveis().size(); i++){
-            if(i == this->funcaoObjetivo.getVariaveis().size()){
-                linha.push_back(0);
-
-            }else if(funcaoObjetivo.getTipo() == "Max" && funcaoObjetivo.getVariaveis()[i].getCoeficiente() != 0){
-                linha.push_back(-(funcaoObjetivo.getVariaveis()[i].getCoeficiente()));
-
-            }else if(funcaoObjetivo.getTipo() == "Min" || funcaoObjetivo.getVariaveis()[i].getCoeficiente() == 0){
-                linha.push_back(funcaoObjetivo.getVariaveis()[i].getCoeficiente()); 
-            }
-        }
-    }
-
-    // Adiciona linha ao tableau:
-    this->tableau.push_back(linha);
-    coeficientesSoma.clear();
-    linha.clear();
-
-    // Adiciona linhas referentes as restrições:
-    for(int i = 0; i < this->restricoes.size(); i++){
-        for(int j = 0; j <= this->restricoes[i].getVariaveis().size(); j++){
-            if(j == this->restricoes[i].getVariaveis().size()){
-                linha.push_back(this->restricoes[i].getSegundoMembro());
-            } else {
-                linha.push_back(this->restricoes[i].getVariaveis()[j].getCoeficiente());
-            }
-        }
 
         // Adiciona linha ao tableau:
-        this->tableau.push_back(linha);
+        this->tableau.insert(tableau.begin(), linha);
+        coeficientesSoma.clear();
         linha.clear();
     }
 }
@@ -238,8 +240,26 @@ void FormaPadrao::setVariaveisBasicas(int colunaPivo, int linhaPivo){
 
     this->variaveisBasicas[linhaPivo-1] = entraBase;
     this->variaveisNaoBasicas.push_back(saiBase);
-
     this->variaveisNaoBasicas.erase(variaveisNaoBasicas.begin() + indiceSai);
+
+    // Verifica fase do metodo das duas fases:
+    if(!segundaFase){
+        for(int i = 0; i < this->outrasVariaveis.size(); i++){
+            if(this->outrasVariaveis[i].getTipo() == "Artificial"){
+                for(int j = 0; j < this->variaveisBasicas.size(); j++){
+                    if(this->outrasVariaveis[i].getIndice() == this->variaveisBasicas[j]){
+                        this->segundaFase = false;
+                    }else{
+                        this->segundaFase = true;
+                    }
+                }
+            }
+        }
+
+        if(segundaFase){
+            this->setSegundaFase();
+        }
+    }
 
     /*
     for(int i = 0; i < this->variaveisBasicas.size(); i++){
@@ -253,23 +273,39 @@ void FormaPadrao::setVariaveisBasicas(int colunaPivo, int linhaPivo){
 
 }
 
+void FormaPadrao::setSegundaFase(){
+
+    tableau.erase(tableau.begin());
+
+    for(int i = 0; i < this->outrasVariaveis.size(); i++){
+        if(this->outrasVariaveis[i].getTipo() == "Artificial"){
+            for(int j = 0; j < this->tableau[0].size(); j++){
+                if(this->outrasVariaveis[i].getIndice() == j+1){
+                    for(int k = 0; k < this->tableau.size(); k++){
+                        tableau[k][j] = 0;
+                    }
+                }
+            }
+        }
+    }
+}
+
 bool FormaPadrao::verificacaoSolucao(){
     int contador = 0;
 
     while(true){
         contador++;
 
-        this->printTableau();
+        if(contador == 1){
+            this->printTableau();
+        }
 
         double menor = DBL_MAX;
         int colunaPivo;
 
         // Verifica qual o menor elemento:
         for(int i = 0; i < tableau[0].size()-1; i++){
-            cout << "Menor: " << menor << endl;
-            cout << "Coluna: " << colunaPivo << endl;
-            if(tableau[0][i] < menor){
-                cout << "entrei no if" << endl;
+            if(tableau[0][i] < menor && !comparaDouble(tableau[0][i], menor)){
                 menor = tableau[0][i];
                 colunaPivo = i;
             }
@@ -303,10 +339,9 @@ void FormaPadrao::defineNovaBase(int colunaPivo){
         }
     }
 
-    cout << "Coluna pivo: " << colunaPivo << endl;
-    cout << "Linha pivo: " << linhaPivo << endl;
-
+    //cout << "Coluna pivo: " << colunaPivo << endl;
     //cout << "Linha pivo: " << linhaPivo << endl;
+
     this->atualizaTableau(colunaPivo, linhaPivo);
     this->setVariaveisBasicas(colunaPivo, linhaPivo);
 }
@@ -412,4 +447,11 @@ void FormaPadrao::getSolucaoOtima(vector <double> &solucaoVariaveisBasicas, vect
             }
         }
     }
+}
+
+bool FormaPadrao::comparaDouble(double a, double b){
+
+    double epsilon = 0.001;
+    return std::abs(a - b) < epsilon;
+
 }
