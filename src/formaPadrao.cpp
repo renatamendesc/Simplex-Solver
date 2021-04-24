@@ -10,13 +10,13 @@ FormaPadrao::FormaPadrao(Modelo formaOriginal){
     vector <double> coeficientes;
     VariaveisAdicionadas novaVariavel;
     Restricoes restricao;
+    int somador = 0;
 
     // Verifica se há alguma restrição com segundo membro negativo:
     formaOriginal.verificaNegatividade();
     
     // Analisa restrições:
     for(int i = 0; i < formaOriginal.getRestricoes().size(); i++){
-        int somador = 0;
 
         if(formaOriginal.getRestricoes()[i].getRelacao() == "<="){
             novaVariavel.setIndice(i + formaOriginal.getFuncaoObjetivo().getVariaveis().size() + somador + 1);
@@ -49,8 +49,8 @@ FormaPadrao::FormaPadrao(Modelo formaOriginal){
             this->numeroFolgas++;
 
             this->outrasVariaveis.push_back(novaVariavel);
-
             somador++;
+
             novaVariavel.setIndice(i + formaOriginal.getFuncaoObjetivo().getVariaveis().size() + somador + 1);
             novaVariavel.setCoeficiente(1);
             novaVariavel.setTipo("Artificial");
@@ -64,8 +64,10 @@ FormaPadrao::FormaPadrao(Modelo formaOriginal){
         }
     }
 
+    // Percorre variaveis da função objetivo:
     for(int i = 0; i < formaOriginal.getFuncaoObjetivo().getVariaveis().size() + numeroArtificiais + numeroFolgas; i++){
  
+        // Define variaveis "comuns" como não básicas:
         if(i < formaOriginal.getFuncaoObjetivo().getVariaveis().size()){
             coeficientes.push_back(formaOriginal.getFuncaoObjetivo().getVariaveis()[i].getCoeficiente());
             this->variaveisNaoBasicas.push_back(i+1);
@@ -75,6 +77,7 @@ FormaPadrao::FormaPadrao(Modelo formaOriginal){
         }
     }
 
+    // Coloca função objetivo na forma padrão:
     this->funcaoObjetivo.setTipo(formaOriginal.getFuncaoObjetivo().getTipo());
     this->funcaoObjetivo.setSegundoMembro(formaOriginal.getFuncaoObjetivo().getSegundoMembro());
     this->funcaoObjetivo.setVariaveis(coeficientes);
@@ -82,18 +85,25 @@ FormaPadrao::FormaPadrao(Modelo formaOriginal){
     coeficientes.clear();
 
     if(this->numeroArtificiais == 0){
+
+        // Caso não haja variaveis artificiais, define folgas como básicas:
         for(int i = 0; i < this->numeroFolgas; i++){
             this->variaveisBasicas.push_back(this->outrasVariaveis[i].getIndice());
         }
 
     } else {
 
+        // Analisa variaveis que foram adicionadas:
         for(int i = 0; i < this->outrasVariaveis.size(); i++){
-            if(this->outrasVariaveis[i].getCoeficiente() == -1){
-                this->variaveisNaoBasicas.push_back(this->outrasVariaveis[i].getIndice()); 
-            }else{
-                 this->variaveisBasicas.push_back(this->outrasVariaveis[i].getIndice());
-            } 
+
+            // Se a variavel for artificial, define como básica:
+            if(this->outrasVariaveis[i].getTipo() == "Artificial"){
+                this->variaveisBasicas.push_back(this->outrasVariaveis[i].getIndice());
+            } else if(this->outrasVariaveis[i].getTipo() == "Folga" && this->outrasVariaveis[i].getCoeficiente() == 1){
+                this->variaveisBasicas.push_back(this->outrasVariaveis[i].getIndice());
+            } else if(this->outrasVariaveis[i].getTipo() == "Folga" && this->outrasVariaveis[i].getCoeficiente() == -1){
+                this->variaveisNaoBasicas.push_back(this->outrasVariaveis[i].getIndice());
+            }
         }
     }
 
@@ -221,12 +231,16 @@ void FormaPadrao::setVariaveisBasicas(int colunaPivo, int linhaPivo){
         }
     }
 
-    //cout << "Entra: " << entraBase << endl;
-
     // Determina variavel que sai na base:
     for(int i = 0; i < this->funcaoObjetivo.getVariaveis().size(); i++){
-        if(this->variaveisBasicas[linhaPivo-1] == this->funcaoObjetivo.getVariaveis()[i].getIndice()){
-            saiBase = this->variaveisBasicas[linhaPivo-1] ;
+        if(duasFases && !segundaFase){
+            if(this->variaveisBasicas[linhaPivo-2] == this->funcaoObjetivo.getVariaveis()[i].getIndice()){
+                saiBase = this->variaveisBasicas[linhaPivo-2] ;
+            }
+        } else {
+            if(this->variaveisBasicas[linhaPivo-1] == this->funcaoObjetivo.getVariaveis()[i].getIndice()){
+                saiBase = this->variaveisBasicas[linhaPivo-1] ;
+            }
         }
     }
 
@@ -236,58 +250,15 @@ void FormaPadrao::setVariaveisBasicas(int colunaPivo, int linhaPivo){
         }
     }
 
-    //cout << "Sai: " << saiBase << endl;
-
-    this->variaveisBasicas[linhaPivo-1] = entraBase;
+    if(duasFases && !segundaFase){
+        this->variaveisBasicas[linhaPivo-2] = entraBase;
+    } else {
+        this->variaveisBasicas[linhaPivo-1] = entraBase;
+    }
+    
     this->variaveisNaoBasicas.push_back(saiBase);
     this->variaveisNaoBasicas.erase(variaveisNaoBasicas.begin() + indiceSai);
 
-    // Verifica fase do metodo das duas fases:
-    if(!segundaFase){
-        for(int i = 0; i < this->outrasVariaveis.size(); i++){
-            if(this->outrasVariaveis[i].getTipo() == "Artificial"){
-                for(int j = 0; j < this->variaveisBasicas.size(); j++){
-                    if(this->outrasVariaveis[i].getIndice() == this->variaveisBasicas[j]){
-                        this->segundaFase = false;
-                    }else{
-                        this->segundaFase = true;
-                    }
-                }
-            }
-        }
-
-        if(segundaFase){
-            this->setSegundaFase();
-        }
-    }
-
-    /*
-    for(int i = 0; i < this->variaveisBasicas.size(); i++){
-        cout << "variavel básica: x_" << this->variaveisBasicas[i] << endl;
-    }
-
-    for(int i = 0; i < this->variaveisNaoBasicas.size(); i++){
-        cout << "variavel não básica: x_" << this->variaveisNaoBasicas[i] << endl;
-    }
-    */
-
-}
-
-void FormaPadrao::setSegundaFase(){
-
-    tableau.erase(tableau.begin());
-
-    for(int i = 0; i < this->outrasVariaveis.size(); i++){
-        if(this->outrasVariaveis[i].getTipo() == "Artificial"){
-            for(int j = 0; j < this->tableau[0].size(); j++){
-                if(this->outrasVariaveis[i].getIndice() == j+1){
-                    for(int k = 0; k < this->tableau.size(); k++){
-                        tableau[k][j] = 0;
-                    }
-                }
-            }
-        }
-    }
 }
 
 bool FormaPadrao::verificacaoSolucao(){
@@ -296,7 +267,7 @@ bool FormaPadrao::verificacaoSolucao(){
     while(true){
         contador++;
 
-        if(contador == 1){
+        if(contador == 1 || contador == 2 || contador == 3){
             this->printTableau();
         }
 
@@ -312,10 +283,61 @@ bool FormaPadrao::verificacaoSolucao(){
         }
 
         // Verifica se o menor elemento é negativo:
+        if(duasFases && !segundaFase){
+            this->verificaSegundaFase();
+            if(segundaFase){
+                continue;
+            }
+        }
+        
         if(menor < 0){
             this->defineNovaBase(colunaPivo);
         } else {
             return true;
+        }
+    }
+}
+
+void FormaPadrao::verificaSegundaFase(){
+    int contadorBase = 0;
+
+    // Verifica fase do metodo das duas fases:
+    for(int i = 0; i < this->outrasVariaveis.size(); i++){
+        if(this->outrasVariaveis[i].getTipo() == "Artificial"){
+
+            for(int j = 0; j < this->variaveisBasicas.size(); j++){
+                if(this->outrasVariaveis[i].getIndice() == this->variaveisBasicas[j]){
+                    
+                    contadorBase++;
+                }
+            }
+        }
+    }
+
+    if(contadorBase == 0){
+        segundaFase = true;
+    }
+
+    if(segundaFase){
+        this->tableau.erase(this->tableau.begin());
+
+        // Percorre variaveis de folga e artificiais:
+        for(int i = 0; i < this->outrasVariaveis.size(); i++){
+
+            // Caso a variavel seja artificial:
+            if(this->outrasVariaveis[i].getTipo() == "Artificial"){
+
+                // Procura coluna referente a variavel artifical:
+                for(int j = 0; j < this->tableau[0].size(); j++){
+
+                    // Aloca 0 na coluna da variavel:
+                    if(this->outrasVariaveis[i].getIndice() == j+1){
+                        for(int k = 0; k < this->tableau.size(); k++){
+                            this->tableau[k][j] = 0;
+                        }
+                    } 
+                }
+            }
         }
     }
 }
@@ -326,8 +348,15 @@ void FormaPadrao::defineNovaBase(int colunaPivo){
 
     // Verifica a linha pivô:
     for(int i = 1; i < this->tableau.size(); i++){
-        if(this->tableau[i][colunaPivo] != 0){
-            resultado = this->tableau[i][tableau[i].size()-1] / this->tableau[i][colunaPivo];
+
+        if(duasFases && !segundaFase){
+            if(this->tableau[i][colunaPivo] != 0 && i != 1){
+                resultado = this->tableau[i][tableau[i].size()-1] / this->tableau[i][colunaPivo];
+            }
+        }else {
+            if(this->tableau[i][colunaPivo] != 0){
+                resultado = this->tableau[i][tableau[i].size()-1] / this->tableau[i][colunaPivo];
+            }
         }
 
         if(menor == DBL_MAX){
@@ -338,9 +367,6 @@ void FormaPadrao::defineNovaBase(int colunaPivo){
             linhaPivo = i;
         }
     }
-
-    //cout << "Coluna pivo: " << colunaPivo << endl;
-    //cout << "Linha pivo: " << linhaPivo << endl;
 
     this->atualizaTableau(colunaPivo, linhaPivo);
     this->setVariaveisBasicas(colunaPivo, linhaPivo);

@@ -17,13 +17,13 @@ class FormaPadrao {
 
         void setTableau();
         void setVariaveisBasicas(int, int);
-        void setSegundaFase();
 
         void printTableau();
         void printFuncaoObjetivo();
         void printRestricoes();
 
         bool verificacaoSolucao();
+        void verificaSegundaFase();
 
         void defineNovaBase(int);
         void atualizaTableau(int, int);
