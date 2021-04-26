@@ -5,7 +5,7 @@ void VariaveisAdicionadas::setIndice(int i){
     this->indice = i;
 }
 
-void VariaveisAdicionadas::setCoeficiente(double c){
+void VariaveisAdicionadas::setCoeficiente(float c){
     this->coeficiente = c;
 }
 
@@ -25,7 +25,7 @@ int VariaveisAdicionadas::getIndice(){
     return this->indice;
 }
 
-double VariaveisAdicionadas::getCoeficiente(){
+float VariaveisAdicionadas::getCoeficiente(){
     return this->coeficiente;
 }
 

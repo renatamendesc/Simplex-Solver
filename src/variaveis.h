@@ -5,14 +5,14 @@ class Variaveis {
 
     public:
         void setIndice(int);
-        void setCoeficiente(double);
+        void setCoeficiente(float);
         
         int getIndice();
-        double getCoeficiente();
+        float getCoeficiente();
 
     private:
         int indice;
-        double coeficiente;
+        float coeficiente;
 
 };
 

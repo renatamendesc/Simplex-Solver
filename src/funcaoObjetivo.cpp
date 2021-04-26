@@ -7,7 +7,7 @@ void FuncaoObjetivo::setTipo(string tipo){
     this->tipo = tipo;
 }
 
-void FuncaoObjetivo::setVariaveis(vector <double> coeficientes){
+void FuncaoObjetivo::setVariaveis(vector <float> coeficientes){
     Variaveis variavel;
 
     for(int i = 0; i < coeficientes.size(); i++){
@@ -19,11 +19,11 @@ void FuncaoObjetivo::setVariaveis(vector <double> coeficientes){
     
 }
 
-void FuncaoObjetivo::setSegundoMembro(double segundoMembro){
+void FuncaoObjetivo::setSegundoMembro(float segundoMembro){
     this->segundoMembro = segundoMembro;
 }
 
-double FuncaoObjetivo::getSegundoMembro(){
+float FuncaoObjetivo::getSegundoMembro(){
     return this->segundoMembro;
 }
 

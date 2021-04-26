@@ -12,17 +12,17 @@ class FuncaoObjetivo {
 
     public:
         void setTipo(string);
-        void setVariaveis(vector <double>);
-        void setSegundoMembro(double);
+        void setVariaveis(vector <float>);
+        void setSegundoMembro(float);
 
         string getTipo();
         vector <Variaveis> getVariaveis();
-        double getSegundoMembro();
+        float getSegundoMembro();
 
 
     private:
         string tipo;
-        double segundoMembro = 0;
+        float segundoMembro = 0;
         vector <Variaveis> variaveis; 
         
 

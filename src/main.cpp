@@ -9,8 +9,8 @@ using namespace std;
 
 void leitura(Modelo &modelo){
     int numeroVariaveis, numeroRestricoes;
-    double coeficiente, coeficienteRestricao, segundoMembro;
-    vector <double> coeficientes, coeficientesRestricoes;
+    float coeficiente, coeficienteRestricao, segundoMembro;
+    vector <float> coeficientes, coeficientesRestricoes;
     string tipo, relacao;
 
     cout << "\n-------------------------------------RESOLVEDOR SIMPLEX-------------------------------------\n\n";
@@ -61,7 +61,7 @@ void leitura(Modelo &modelo){
 }
 
 int main(void){
-    vector <double> solucaoVariaveisBasicas, solucaoVariaveisNaoBasicas;
+    vector <float> solucaoVariaveisBasicas, solucaoVariaveisNaoBasicas;
     vector <int> indicesVariaveisBasicas, indicesVariaveisNaoBasicas;
     bool verificacao = false;
 

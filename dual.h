@@ -1,5 +1,5 @@
-#ifndef MODELO_H
-#define MODELO_H
+#ifndef DUAL_H
+#define DUAL_H
 
 #include "funcaoObjetivo.h"
 #include "funcaoObjetivo.cpp"
@@ -10,19 +10,19 @@
 
 using namespace std;
 
-class Modelo {
+class Dual {
     
     public:
         void setFuncaoObjetivo(string, vector <float>);
         void setRestricoes(string, float, vector <float>);
-
-        void verificaNegatividade();
 
         FuncaoObjetivo getFuncaoObjetivo();
         vector <Restricoes> getRestricoes();
 
         void printFuncaoObjetivo();
         void printRestricoes();
+
+        Dual();
 
     private:
         FuncaoObjetivo funcaoObjetivo;

@@ -7,7 +7,7 @@
 using namespace std;
 
 FormaPadrao::FormaPadrao(Modelo formaOriginal){
-    vector <double> coeficientes;
+    vector <float> coeficientes;
     VariaveisAdicionadas novaVariavel;
     Restricoes restricao;
     int somador = 0;
@@ -134,9 +134,9 @@ FormaPadrao::FormaPadrao(Modelo formaOriginal){
 }
 
 void FormaPadrao::setTableau(){
-    vector <double> linha;
+    vector <float> linha;
     vector <Restricoes> restricaoSoma;
-    vector <double> coeficientesSoma;
+    vector <float> coeficientesSoma;
     Restricoes resultante;
 
 
@@ -180,7 +180,7 @@ void FormaPadrao::setTableau(){
         }
 
         for(int i = 0; i <= restricaoSoma[0].getVariaveis().size(); i++){
-            double elemento = 0;
+            float elemento = 0;
 
             for(int j = 0; j < restricaoSoma.size(); j++){ 
 
@@ -262,21 +262,16 @@ void FormaPadrao::setVariaveisBasicas(int colunaPivo, int linhaPivo){
 }
 
 bool FormaPadrao::verificacaoSolucao(){
-    int contador = 0;
 
     while(true){
-        contador++;
+        iteracoes++;
 
-        if(contador == 1 || contador == 2 || contador == 3){
-            this->printTableau();
-        }
-
-        double menor = DBL_MAX;
+        float menor = DBL_MAX;
         int colunaPivo;
 
         // Verifica qual o menor elemento:
         for(int i = 0; i < tableau[0].size()-1; i++){
-            if(tableau[0][i] < menor && !comparaDouble(tableau[0][i], menor)){
+            if(tableau[0][i] < menor && !comparafloat(tableau[0][i], menor)){
                 menor = tableau[0][i];
                 colunaPivo = i;
             }
@@ -343,7 +338,7 @@ void FormaPadrao::verificaSegundaFase(){
 }
 
 void FormaPadrao::defineNovaBase(int colunaPivo){
-    double menor = DBL_MAX, resultado = DBL_MAX;
+    float menor = DBL_MAX, resultado = DBL_MAX;
     int linhaPivo;
 
     // Verifica a linha pivô:
@@ -373,23 +368,26 @@ void FormaPadrao::defineNovaBase(int colunaPivo){
 }
 
 void FormaPadrao::atualizaTableau(int colunaPivo, int linhaPivo){
-    double elementoPivo = this->tableau[linhaPivo][colunaPivo];
+    float elementoPivo = this->tableau[linhaPivo][colunaPivo];
 
     // Atualiza nova linha pivô:
     for(int i = 0; i < this->tableau[linhaPivo].size(); i++){
         this->tableau[linhaPivo][i] = this->tableau[linhaPivo][i] / elementoPivo;
-    }
+    }  
 
     // Atualiza as demais linhas:
     for(int i = 0; i < this->tableau.size(); i++){
         if(i != linhaPivo){
-            double multiplicador = -(this->tableau[i][colunaPivo]);
+            float multiplicador = -(this->tableau[i][colunaPivo]);
 
             for(int j = 0; j < this->tableau[i].size(); j++){
-                this->tableau[i][j] = (multiplicador * (this->tableau[linhaPivo][j])) + this->tableau[i][j];
+                float somador = this->tableau[i][j];
+
+                this->tableau[i][j] = (multiplicador * (this->tableau[linhaPivo][j])) + somador;
             }
         }
     }
+
 }
 
 void FormaPadrao::printTableau(){
@@ -444,7 +442,7 @@ void FormaPadrao::printRestricoes(){
     cout << endl;
 }
 
-double FormaPadrao::getValorOtimo(){
+float FormaPadrao::getValorOtimo(){
 
     if(funcaoObjetivo.getTipo() == "Max"){
         return this->tableau[0][tableau[0].size()-1];
@@ -454,7 +452,7 @@ double FormaPadrao::getValorOtimo(){
     
 }
 
-void FormaPadrao::getSolucaoOtima(vector <double> &solucaoVariaveisBasicas, vector <double> &solucaoVariaveisNaoBasicas, vector <int> &indicesVariaveisBasicas, vector <int> &indicesVariaveisNaoBasicas){
+void FormaPadrao::getSolucaoOtima(vector <float> &solucaoVariaveisBasicas, vector <float> &solucaoVariaveisNaoBasicas, vector <int> &indicesVariaveisBasicas, vector <int> &indicesVariaveisNaoBasicas){
 
     for(int i = 0; i < this->variaveisNaoBasicas.size(); i++){
         for(int j = 0; j < this->funcaoObjetivo.getVariaveis().size(); j++){
@@ -475,9 +473,9 @@ void FormaPadrao::getSolucaoOtima(vector <double> &solucaoVariaveisBasicas, vect
     }
 }
 
-bool FormaPadrao::comparaDouble(double a, double b){
+bool FormaPadrao::comparafloat(float a, float b){
 
-    double epsilon = 0.001;
+    float epsilon = 0.001;
     return std::abs(a - b) < epsilon;
 
 }

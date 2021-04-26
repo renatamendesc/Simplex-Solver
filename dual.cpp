@@ -1,24 +1,24 @@
-#include "modelo.h"
+#include "dual.h"
 #include <iostream>
 
 using namespace std;
 
-FuncaoObjetivo Modelo::getFuncaoObjetivo(){
+FuncaoObjetivo Dual::getFuncaoObjetivo(){
     return this->funcaoObjetivo;
 }
 
-vector <Restricoes> Modelo::getRestricoes(){
+vector <Restricoes> Dual::getRestricoes(){
     return this->restricoes;
 }
 
-void Modelo::setFuncaoObjetivo(string tipo, vector <float> coeficientes){
+void Dual::setFuncaoObjetivo(string tipo, vector <float> coeficientes){
     
     this->funcaoObjetivo.setTipo(tipo);
     this->funcaoObjetivo.setVariaveis(coeficientes);
 
 }
 
-void Modelo::setRestricoes(string relacao, float segundoMembro, vector <float> coeficientes){
+void Dual::setRestricoes(string relacao, float segundoMembro, vector <float> coeficientes){
 
     Restricoes restricao;
 
@@ -36,32 +36,7 @@ void Modelo::setRestricoes(string relacao, float segundoMembro, vector <float> c
     this->restricoes.push_back(restricao);
 }
 
-void Modelo::verificaNegatividade(){
-
-    for(int i = 0; i < restricoes.size(); i++){
-
-        // Multiplica restrição que o lado direito for negativo:
-        if(restricoes[i].getSegundoMembro() < 0){
-            cout << "entrei no if" << endl;
-
-            // Percorre variáveis da restrição:
-            for(int j = 0; j < restricoes[i].getVariaveis().size(); j++){
-                
-                restricoes[i].inverteCoeficiente(j);
-                
-                cout << restricoes[i].getVariaveis()[j].getCoeficiente() << endl; 
-            }
-
-            restricoes[i].setRelacao("<=");
-
-            restricoes[i].setSegundoMembro(-(restricoes[i].getSegundoMembro()));
-            
-            cout << restricoes[i].getSegundoMembro() << endl;
-        }
-    }
-}
-
-void Modelo::printFuncaoObjetivo(){
+void Dual::printFuncaoObjetivo(){
 
     cout << "\nFunção Objetivo: " << this->funcaoObjetivo.getTipo() << " Z = ";
     
@@ -76,7 +51,7 @@ void Modelo::printFuncaoObjetivo(){
     cout << endl;
 }
 
-void Modelo::printRestricoes(){
+void Dual::printRestricoes(){
 
     cout << "\nSujeito a:\n";
 

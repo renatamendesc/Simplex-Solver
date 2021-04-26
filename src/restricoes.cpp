@@ -7,7 +7,7 @@ void Restricoes::setRelacao(string relacao){
     this->relacao = relacao;
 }
 
-void Restricoes::setVariaveis(vector <double> coeficientes){
+void Restricoes::setVariaveis(vector <float> coeficientes){
     Variaveis variavel;
 
     variaveis.clear();
@@ -38,7 +38,7 @@ void Restricoes::inverteCoeficiente(int indice){
 }
 
 
-void Restricoes::setSegundoMembro(double segundoMembro){
+void Restricoes::setSegundoMembro(float segundoMembro){
     this->segundoMembro = segundoMembro;
 }
 
@@ -50,7 +50,7 @@ string Restricoes::getRelacao(){
     return this->relacao;
 }
 
-double Restricoes::getSegundoMembro(){
+float Restricoes::getSegundoMembro(){
     return this->segundoMembro;
 }
 

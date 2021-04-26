@@ -9,12 +9,12 @@ class VariaveisAdicionadas {
 
     public:
         void setIndice(int);
-        void setCoeficiente(double);
+        void setCoeficiente(float);
         void setTipo(string);
         void setRestricao(int);
         
         int getIndice();
-        double getCoeficiente();
+        float getCoeficiente();
         string getTipo();
         int getRestricao();
 
@@ -22,7 +22,7 @@ class VariaveisAdicionadas {
         string tipo;
         int restricao;
         int indice;
-        double coeficiente;
+        float coeficiente;
 
 };
 

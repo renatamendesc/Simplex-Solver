@@ -11,10 +11,10 @@ class Restricoes {
 
     public:
         void setRelacao(string);
-        void setVariaveis(vector <double>);
+        void setVariaveis(vector <float>);
         void setVariaveisFolgas(int, int, int);
         void setVariaveisArtificiais(int, int, int);
-        void setSegundoMembro(double);
+        void setSegundoMembro(float);
 
         void inverteCoeficiente(int);
 
@@ -22,11 +22,11 @@ class Restricoes {
         vector <Variaveis> getVariaveis();
         Variaveis getVariaveisFolgas();
         Variaveis getVariaveisArtificiais();
-        double getSegundoMembro();
+        float getSegundoMembro();
     
     private:
         string relacao;
-        double segundoMembro;
+        float segundoMembro;
         vector <Variaveis> variaveis;
         Variaveis variaveisFolgas;
         Variaveis variaveisArtificiais;
