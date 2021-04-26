@@ -1,10 +1,7 @@
 #ifndef DUAL_H
 #define DUAL_H
 
-#include "funcaoObjetivo.h"
-#include "funcaoObjetivo.cpp"
-#include "restricoes.h"
-#include "restricoes.cpp"
+#include "modelo.h"
 #include <iostream>
 #include <vector>
 
@@ -22,7 +19,7 @@ class Dual {
         void printFuncaoObjetivo();
         void printRestricoes();
 
-        Dual();
+        Dual(Modelo);
 
     private:
         FuncaoObjetivo funcaoObjetivo;

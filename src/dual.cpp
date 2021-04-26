@@ -3,12 +3,54 @@
 
 using namespace std;
 
-FuncaoObjetivo Dual::getFuncaoObjetivo(){
-    return this->funcaoObjetivo;
-}
 
-vector <Restricoes> Dual::getRestricoes(){
-    return this->restricoes;
+Dual::Dual(Modelo primal){
+    int numeroVariaveis, numeroRestricoes;
+    float coeficiente, coeficienteRestricao, segundoMembro;
+    vector <float> coeficientes, coeficientesRestricoes;
+    string tipo, relacao;
+
+    // Define tipo do dual:
+    if(primal.getFuncaoObjetivo().getTipo() == "Max"){
+        tipo = "Min";
+    } else if(primal.getFuncaoObjetivo().getTipo() == "Min"){
+        tipo = "Max";
+    }
+
+    // Define coeficientes das variaveis decisão:
+    for(int i = 0; i < primal.getRestricoes().size(); i++){
+
+        coeficiente = primal.getRestricoes()[i].getSegundoMembro();
+        coeficientes.push_back(coeficiente);
+
+    }
+
+    this->setFuncaoObjetivo(tipo, coeficientes);
+
+    for(int i = 0; i < primal.getFuncaoObjetivo().getVariaveis().size(); i++){
+      
+        // Define relação das restrições:
+        if(primal.getFuncaoObjetivo().getTipo() == "Max"){
+            relacao = ">=";
+            
+        }else if(primal.getFuncaoObjetivo().getTipo() == "Min"){
+            relacao = "<=";
+
+        }
+
+        segundoMembro = primal.getFuncaoObjetivo().getVariaveis()[i].getCoeficiente();
+
+        for(int j = 0; j < primal.getRestricoes().size(); j++){
+
+            coeficienteRestricao = primal.getRestricoes()[j].getVariaveis()[i].getCoeficiente();
+
+            coeficientesRestricoes.push_back(coeficienteRestricao);
+        }
+
+        this->setRestricoes(relacao, segundoMembro, coeficientesRestricoes);
+        coeficientesRestricoes.clear();
+    }
+
 }
 
 void Dual::setFuncaoObjetivo(string tipo, vector <float> coeficientes){
@@ -24,14 +66,7 @@ void Dual::setRestricoes(string relacao, float segundoMembro, vector <float> coe
 
     restricao.setVariaveis(coeficientes);
     restricao.setSegundoMembro(segundoMembro);
-
-    if(relacao == "Menor ou igual"){
-        restricao.setRelacao("<=");
-    }else if(relacao == "Maior ou igual"){
-        restricao.setRelacao(">=");
-    }else if(relacao == "Igual"){
-        restricao.setRelacao("=");
-    }
+    restricao.setRelacao(relacao);
 
     this->restricoes.push_back(restricao);
 }

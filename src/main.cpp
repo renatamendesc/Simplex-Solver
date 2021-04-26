@@ -1,5 +1,7 @@
 #include "modelo.h"
 #include "modelo.cpp"
+#include "dual.h"
+#include "dual.cpp"
 #include "formaPadrao.h"
 #include "formaPadrao.cpp"
 #include <iostream>
@@ -98,5 +100,10 @@ int main(void){
     }
 
     cout << endl;
+
+    Dual dual = Dual(modelo);
+    cout << "Dual: ";
+    dual.printFuncaoObjetivo();
+    dual.printRestricoes();
 
 }
