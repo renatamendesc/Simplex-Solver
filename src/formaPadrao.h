@@ -28,6 +28,8 @@ class FormaPadrao {
         void defineNovaBase(int);
         void atualizaTableau(int, int);
 
+        void analiseSensibilidade();
+
         bool comparafloat(float a, float b);
 
         FormaPadrao(Modelo);

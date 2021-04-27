@@ -473,6 +473,87 @@ void FormaPadrao::getSolucaoOtima(vector <float> &solucaoVariaveisBasicas, vecto
     }
 }
 
+void FormaPadrao::analiseSensibilidade(){
+    vector <vector <int>> matrizFolga;
+    vector <int> linhas, maoDireita;
+
+    // Percorre linhas do tableau:
+    for(int i = 1; i < this->tableau.size(); i++){
+        // Percorre elementos da linha (colunas):
+        for(int j = 0; j < this->tableau[i].size(); j++){
+            for(int k = 0; k < this->outrasVariaveis.size(); k++){
+                // Verifica se a coluna em questão é referente a uma variável de folga:
+                if(this->outrasVariaveis[k].getTipo() == "Folga" && j+1 == this->outrasVariaveis[k].getIndice()){
+                    linhas.push_back(this->tableau[i][j]);
+                }else if(j == this->tableau[i].size()){
+                    maoDireita.push_back(this->tableau[i][j]);
+                    cout << "adicionei " << this->tableau[i][j] << "na mao direita" << endl;
+                }
+            }
+        }
+
+        // Adiciona na matriz referente às variaveis de folga
+        matrizFolga.push_back(linhas);
+        linhas.clear();
+    }
+
+    cout << "Mão direita: ";
+    for(int i = 0; i < maoDireita.size(); i++){
+        cout << maoDireita[i] << " ";
+    }
+
+    cout << endl;
+
+    vector <int> limiteMenor(matrizFolga.size()), limiteMaior(matrizFolga.size());
+    double maiorNegativo = DBL_MAX, menorPositivo = DBL_MIN, limite;
+
+    // Percorre todas restrições:
+    for(int i = 0; i < matrizFolga.size(); i++){
+        for(int j = 0; j < matrizFolga.size(); j++){
+            
+            if(this->tableau[j][i] != 0){
+                limite = maoDireita[j]/this->tableau[j][i];
+
+                if(limite < 0 && limite > maiorNegativo){
+                    maiorNegativo = limite;
+
+                }else if(limite > 0 && limite < menorPositivo){
+                    menorPositivo = limite;
+
+                }
+                
+            }
+        }
+
+        limiteMaior.push_back(menorPositivo);
+        limiteMenor.push_back(maiorNegativo);
+
+    }
+
+    
+    for(int i = 0; i < matrizFolga.size(); i++){
+        for(int j = 0; j < matrizFolga[i].size(); j++){
+            cout << matrizFolga[i][j] << " ";
+        }
+        cout << endl;
+    }
+
+    cout << "Aumento permitido: ";
+    for(int i = 0; i < limiteMaior.size(); i++){
+        cout << limiteMaior[i] << " ";
+    }
+
+    cout << endl;
+
+    cout << "Diminuição permitida: ";
+    for(int i = 0; i < limiteMenor.size(); i++){
+        cout << limiteMenor[i] << " ";
+    }
+
+    cout << endl;
+    
+}
+
 bool FormaPadrao::comparafloat(float a, float b){
 
     float epsilon = 0.001;

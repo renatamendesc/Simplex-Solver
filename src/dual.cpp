@@ -73,10 +73,10 @@ void Dual::setRestricoes(string relacao, float segundoMembro, vector <float> coe
 
 void Dual::printFuncaoObjetivo(){
 
-    cout << "\nFunção Objetivo: " << this->funcaoObjetivo.getTipo() << " Z = ";
+    cout << "\nFunção Objetivo: " << this->funcaoObjetivo.getTipo() << " W = ";
     
     for(int i = 0; i < this->funcaoObjetivo.getVariaveis().size(); i++){
-        cout << this->funcaoObjetivo.getVariaveis()[i].getCoeficiente() << "x_" << this->funcaoObjetivo.getVariaveis()[i].getIndice();
+        cout << this->funcaoObjetivo.getVariaveis()[i].getCoeficiente() << "y_" << this->funcaoObjetivo.getVariaveis()[i].getIndice();
 
         if(i < this->funcaoObjetivo.getVariaveis().size()-1){
             cout << " + ";
@@ -97,7 +97,7 @@ void Dual::printRestricoes(){
         for(int j = 0; j < this->restricoes[i].getVariaveis().size(); j++){
 
             if(this->restricoes[i].getVariaveis()[j].getCoeficiente() != 0){
-                cout << this->restricoes[i].getVariaveis()[j].getCoeficiente() << "x_" << this->restricoes[i].getVariaveis()[j].getIndice();
+                cout << this->restricoes[i].getVariaveis()[j].getCoeficiente() << "y_" << this->restricoes[i].getVariaveis()[j].getIndice();
 
                 if(j < this->restricoes[i].getVariaveis().size()-1 && this->restricoes[i].getVariaveis()[j+1].getCoeficiente() != 0){
                     cout << " + ";

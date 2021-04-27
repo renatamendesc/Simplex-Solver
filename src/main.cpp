@@ -87,6 +87,8 @@ int main(void){
         verificacao = modeloPadrao.verificacaoSolucao();
     }
 
+    modeloPadrao.printTableau();
+
     cout << "Valor ótimo: " << modeloPadrao.getValorOtimo() << endl;
     modeloPadrao.getSolucaoOtima(solucaoVariaveisBasicas, solucaoVariaveisNaoBasicas, indicesVariaveisBasicas, indicesVariaveisNaoBasicas);
 
@@ -105,5 +107,7 @@ int main(void){
     cout << "Dual: ";
     dual.printFuncaoObjetivo();
     dual.printRestricoes();
+
+    modeloPadrao.analiseSensibilidade();
 
 }
