@@ -108,6 +108,12 @@ int main(void){
     dual.printFuncaoObjetivo();
     dual.printRestricoes();
 
-    modeloPadrao.analiseSensibilidade();
+    char selecao;
+    cout << "Deseja fazer análise de sensibilidade? [S/N] ";
+    cin >> selecao;
+
+    if(selecao == 'S'){
+        modeloPadrao.analiseSensibilidade();
+    }
 
 }

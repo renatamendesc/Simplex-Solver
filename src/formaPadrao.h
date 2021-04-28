@@ -30,7 +30,7 @@ class FormaPadrao {
 
         void analiseSensibilidade();
 
-        bool comparafloat(float a, float b);
+        bool comparaFloat(float a, float b);
 
         FormaPadrao(Modelo);
 

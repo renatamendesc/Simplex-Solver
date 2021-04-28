@@ -271,7 +271,7 @@ bool FormaPadrao::verificacaoSolucao(){
 
         // Verifica qual o menor elemento:
         for(int i = 0; i < tableau[0].size()-1; i++){
-            if(tableau[0][i] < menor && !comparafloat(tableau[0][i], menor)){
+            if(tableau[0][i] < menor && !comparaFloat(tableau[0][i], menor)){
                 menor = tableau[0][i];
                 colunaPivo = i;
             }
@@ -474,8 +474,8 @@ void FormaPadrao::getSolucaoOtima(vector <float> &solucaoVariaveisBasicas, vecto
 }
 
 void FormaPadrao::analiseSensibilidade(){
-    vector <vector <int>> matrizFolga;
-    vector <int> linhas, maoDireita;
+    vector <vector <float>> matrizFolga;
+    vector <float> linhas, maoDireita;
 
     // Percorre linhas do tableau:
     for(int i = 1; i < this->tableau.size(); i++){
@@ -485,9 +485,6 @@ void FormaPadrao::analiseSensibilidade(){
                 // Verifica se a coluna em questão é referente a uma variável de folga:
                 if(this->outrasVariaveis[k].getTipo() == "Folga" && j+1 == this->outrasVariaveis[k].getIndice()){
                     linhas.push_back(this->tableau[i][j]);
-                }else if(j == this->tableau[i].size()){
-                    maoDireita.push_back(this->tableau[i][j]);
-                    cout << "adicionei " << this->tableau[i][j] << "na mao direita" << endl;
                 }
             }
         }
@@ -497,64 +494,77 @@ void FormaPadrao::analiseSensibilidade(){
         linhas.clear();
     }
 
-    cout << "Mão direita: ";
-    for(int i = 0; i < maoDireita.size(); i++){
-        cout << maoDireita[i] << " ";
+    // Adiciona valores no vetor da mão direita:
+    for(int i = 1; i < tableau.size(); i++){
+        for(int j = 0; j < tableau[i].size(); j++){
+            if(j == this->tableau[i].size()-1){
+                maoDireita.push_back(this->tableau[i][j]);
+            }
+        }
     }
 
-    cout << endl;
-
-    vector <int> limiteMenor(matrizFolga.size()), limiteMaior(matrizFolga.size());
-    double maiorNegativo = DBL_MAX, menorPositivo = DBL_MIN, limite;
+    vector <float> limiteMenor(matrizFolga.size()), limiteMaior(matrizFolga.size());
+    float limite;
 
     // Percorre todas restrições:
     for(int i = 0; i < matrizFolga.size(); i++){
+        int contadorPositivo = 0, contadorNegativo = 0;
+        float maiorNegativo = 0, menorPositivo = 0;
+
         for(int j = 0; j < matrizFolga.size(); j++){
             
-            if(this->tableau[j][i] != 0){
-                limite = maoDireita[j]/this->tableau[j][i];
+            if(matrizFolga[j][i] != 0){
+                limite = -(maoDireita[j])/matrizFolga[j][i];
 
-                if(limite < 0 && limite > maiorNegativo){
+                if(limite < 0 && contadorNegativo == 0){
                     maiorNegativo = limite;
+                    contadorNegativo++;
+
+                }else if(limite < 0 && limite > maiorNegativo){
+                    maiorNegativo = limite;
+
+                }
+
+                if(limite > 0 && contadorPositivo == 0){
+                    menorPositivo = limite;
+                    contadorPositivo++;
 
                 }else if(limite > 0 && limite < menorPositivo){
                     menorPositivo = limite;
 
-                }
-                
+                } 
             }
         }
 
-        limiteMaior.push_back(menorPositivo);
-        limiteMenor.push_back(maiorNegativo);
+        limiteMaior[i] = menorPositivo;
+        limiteMenor[i] = maiorNegativo;
 
     }
 
-    
+    // Exibe os aumentos e reduções máximos para as variáveis de folga:
     for(int i = 0; i < matrizFolga.size(); i++){
-        for(int j = 0; j < matrizFolga[i].size(); j++){
-            cout << matrizFolga[i][j] << " ";
-        }
-        cout << endl;
-    }
+        for(int j = 0; j < this->outrasVariaveis.size(); j++){
+            if(this->outrasVariaveis[j].getTipo() == "Folga"){
 
-    cout << "Aumento permitido: ";
-    for(int i = 0; i < limiteMaior.size(); i++){
-        cout << limiteMaior[i] << " ";
-    }
+                if(limiteMaior[i] ==  0){
+                    cout << "Aumento máximo para x_" << this->outrasVariaveis[j].getIndice() + i << ": Infinito " << endl;
+                }else{
+                    cout << "Aumento máximo para x_" << this->outrasVariaveis[j].getIndice() + i << ": " << limiteMaior[i] << endl;
+                }
 
-    cout << endl;
+                if(limiteMenor[i] ==  0){
+                    cout << "Redução máxima para x_" << this->outrasVariaveis[j].getIndice() + i << ": Infinito " << endl;
+                }else{
+                    cout << "Redução máxima  para x_" << this->outrasVariaveis[j].getIndice() + i << ": " << -limiteMenor[i] << endl;
+                }
 
-    cout << "Diminuição permitida: ";
-    for(int i = 0; i < limiteMenor.size(); i++){
-        cout << limiteMenor[i] << " ";
-    }
-
-    cout << endl;
-    
+                break;
+            }
+        }  
+    }   
 }
 
-bool FormaPadrao::comparafloat(float a, float b){
+bool FormaPadrao::comparaFloat(float a, float b){
 
     float epsilon = 0.001;
     return std::abs(a - b) < epsilon;
