@@ -13,6 +13,7 @@ class FormaPadrao {
 
     public:
         float getValorOtimo();
+        int getIteracoes();
         void getSolucaoOtima(vector <float> &, vector <float> &, vector <int> &, vector <int> &);
 
         void setTableau();
@@ -22,7 +23,7 @@ class FormaPadrao {
         void printFuncaoObjetivo();
         void printRestricoes();
 
-        bool verificacaoSolucao();
+        bool testeOtimalidade();
         void verificaSegundaFase();
 
         void defineNovaBase(int);

@@ -42,21 +42,17 @@ void Modelo::verificaNegatividade(){
 
         // Multiplica restrição que o lado direito for negativo:
         if(restricoes[i].getSegundoMembro() < 0){
-            cout << "entrei no if" << endl;
 
             // Percorre variáveis da restrição:
             for(int j = 0; j < restricoes[i].getVariaveis().size(); j++){
                 
                 restricoes[i].inverteCoeficiente(j);
                 
-                cout << restricoes[i].getVariaveis()[j].getCoeficiente() << endl; 
             }
 
             restricoes[i].setRelacao("<=");
-
             restricoes[i].setSegundoMembro(-(restricoes[i].getSegundoMembro()));
-            
-            cout << restricoes[i].getSegundoMembro() << endl;
+        
         }
     }
 }

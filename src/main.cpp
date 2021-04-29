@@ -76,20 +76,28 @@ int main(void){
     modelo.printFuncaoObjetivo();
     modelo.printRestricoes();
 
+    cout << "-------------------------------------------------------------------------------------------\n";
+
     // Transforma o modelo para sua forma padrão:
     FormaPadrao modeloPadrao = FormaPadrao(modelo);
+
+    cout << "FORMA PADRÃO: ";
 
     // Exibe o modelo na forma padrão:
     modeloPadrao.printFuncaoObjetivo();
     modeloPadrao.printRestricoes();
 
     while(!verificacao){
-        verificacao = modeloPadrao.verificacaoSolucao();
+        verificacao = modeloPadrao.testeOtimalidade();
     }
 
-    modeloPadrao.printTableau();
+    cout << "-------------------------------------------------------------------------------------------\n";
 
-    cout << "Valor ótimo: " << modeloPadrao.getValorOtimo() << endl;
+    cout << "RESULTADO: " << endl;
+
+    cout << "Número de iterações: " << modeloPadrao.getIteracoes() << endl;
+
+    cout << "\nValor ótimo: " << modeloPadrao.getValorOtimo() << endl;
     modeloPadrao.getSolucaoOtima(solucaoVariaveisBasicas, solucaoVariaveisNaoBasicas, indicesVariaveisBasicas, indicesVariaveisNaoBasicas);
 
     cout << "Solução ótima: " << endl;
@@ -101,19 +109,31 @@ int main(void){
         cout << "\tx_" << indicesVariaveisNaoBasicas[i] << ": " << solucaoVariaveisNaoBasicas[i] << endl;
     }
 
-    cout << endl;
+    cout << "\n-------------------------------------------------------------------------------------------\n";
 
     Dual dual = Dual(modelo);
-    cout << "Dual: ";
+
+    cout << "MODELO DUAL: ";
     dual.printFuncaoObjetivo();
     dual.printRestricoes();
 
+    cout << "-------------------------------------------------------------------------------------------\n";
+
     char selecao;
-    cout << "Deseja fazer análise de sensibilidade? [S/N] ";
+    cout << "Deseja fazer análise de sensibilidade? [S/N] " << endl;
     cin >> selecao;
 
+    cout << "\n-------------------------------------------------------------------------------------------\n";
+
     if(selecao == 'S'){
+        cout << "ANÁLISE DE SENSIBILIDADE: " << endl;;
+        cout << "1) Tableau final do modelo original: " << endl;
+        modeloPadrao.printTableau();
+
+        cout << "2) Mudanças permitidas nos valores da mão direita:" << endl;;
         modeloPadrao.analiseSensibilidade();
+
+         cout << "\n-------------------------------------------------------------------------------------------\n";
     }
 
 }

@@ -219,6 +219,7 @@ void FormaPadrao::setTableau(){
         coeficientesSoma.clear();
         linha.clear();
     }
+
 }
 
 void FormaPadrao::setVariaveisBasicas(int colunaPivo, int linhaPivo){
@@ -261,7 +262,7 @@ void FormaPadrao::setVariaveisBasicas(int colunaPivo, int linhaPivo){
 
 }
 
-bool FormaPadrao::verificacaoSolucao(){
+bool FormaPadrao::testeOtimalidade(){
 
     while(true){
         iteracoes++;
@@ -357,7 +358,7 @@ void FormaPadrao::defineNovaBase(int colunaPivo){
         if(menor == DBL_MAX){
             menor = resultado;
             linhaPivo = i;
-        } else if(resultado < menor && resultado > 0){
+        } else if(resultado < menor && resultado >= 0){
             menor = resultado;
             linhaPivo = i;
         }
@@ -365,10 +366,18 @@ void FormaPadrao::defineNovaBase(int colunaPivo){
 
     this->atualizaTableau(colunaPivo, linhaPivo);
     this->setVariaveisBasicas(colunaPivo, linhaPivo);
+
 }
 
 void FormaPadrao::atualizaTableau(int colunaPivo, int linhaPivo){
     float elementoPivo = this->tableau[linhaPivo][colunaPivo];
+
+    /*
+    this->printTableau();
+    cout << "elemento pivo: " << elementoPivo << endl;
+    cout << "linha pivo: " << linhaPivo << endl;
+    cout << "coluna pivo: " << colunaPivo << endl;
+    */
 
     // Atualiza nova linha pivô:
     for(int i = 0; i < this->tableau[linhaPivo].size(); i++){
@@ -555,13 +564,17 @@ void FormaPadrao::analiseSensibilidade(){
                 if(limiteMenor[i] ==  0){
                     cout << "Redução máxima para x_" << this->outrasVariaveis[j].getIndice() + i << ": Infinito " << endl;
                 }else{
-                    cout << "Redução máxima  para x_" << this->outrasVariaveis[j].getIndice() + i << ": " << -limiteMenor[i] << endl;
+                    cout << "Redução máxima para x_" << this->outrasVariaveis[j].getIndice() + i << ": " << -limiteMenor[i] << endl;
                 }
 
                 break;
             }
         }  
     }   
+}
+
+int FormaPadrao::getIteracoes(){
+    return this->iteracoes;
 }
 
 bool FormaPadrao::comparaFloat(float a, float b){
