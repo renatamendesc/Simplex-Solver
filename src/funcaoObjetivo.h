@@ -8,6 +8,7 @@
 
 using namespace std;
 
+// Classe referente à função objetivo do modelo
 class FuncaoObjetivo {
 
     public:
@@ -19,12 +20,10 @@ class FuncaoObjetivo {
         vector <Variaveis> getVariaveis();
         float getSegundoMembro();
 
-
     private:
-        string tipo;
-        float segundoMembro = 0;
-        vector <Variaveis> variaveis; 
-        
+        string tipo; // Indica se a função é de minimização ou maximização
+        vector <Variaveis> variaveis; // Vector com as variaveis da função
+        float segundoMembro = 0; //Inicializa lado direito da função como zerp    
 
 };
 

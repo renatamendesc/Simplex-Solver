@@ -1,5 +1,4 @@
 #include "variaveisAdicionadas.h"
-#include <iostream>
 
 void VariaveisAdicionadas::setIndice(int i){
     this->indice = i;

@@ -23,7 +23,8 @@ class Dual {
 
     private:
         FuncaoObjetivo funcaoObjetivo;
-        vector <Restricoes> restricoes;   
+        vector <Restricoes> restricoes;
+        vector <string> restricoesVariaveis;  
 
 };
 

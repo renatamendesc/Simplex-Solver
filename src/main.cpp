@@ -33,6 +33,7 @@ void leitura(Modelo &modelo){
         coeficientes.push_back(coeficiente);
     }
 
+    // Inicializa função objetivo do modelo 
     modelo.setFuncaoObjetivo(tipo, coeficientes);
 
     cout << "\nInforme a quantidade de restrições: ";
@@ -54,6 +55,7 @@ void leitura(Modelo &modelo){
             coeficientesRestricoes.push_back(coeficienteRestricao);
         }
 
+        // Inicializa restricao em questao do modelo
         modelo.setRestricoes(relacao, segundoMembro, coeficientesRestricoes);
         coeficientesRestricoes.clear();
     }
@@ -76,7 +78,7 @@ int main(void){
     modelo.printFuncaoObjetivo();
     modelo.printRestricoes();
 
-    cout << "-------------------------------------------------------------------------------------------\n";
+    cout << "\n-------------------------------------------------------------------------------------------\n";
 
     // Transforma o modelo para sua forma padrão:
     FormaPadrao modeloPadrao = FormaPadrao(modelo);
@@ -91,7 +93,7 @@ int main(void){
         verificacao = modeloPadrao.testeOtimalidade();
     }
 
-    cout << "-------------------------------------------------------------------------------------------\n";
+    cout << "\n-------------------------------------------------------------------------------------------\n";
 
     cout << "RESULTADO: " << endl;
 
@@ -117,7 +119,7 @@ int main(void){
     dual.printFuncaoObjetivo();
     dual.printRestricoes();
 
-    cout << "-------------------------------------------------------------------------------------------\n";
+    cout << "\n-------------------------------------------------------------------------------------------\n";
 
     char selecao;
     cout << "Deseja fazer análise de sensibilidade? [S/N] " << endl;
@@ -135,5 +137,4 @@ int main(void){
 
          cout << "\n-------------------------------------------------------------------------------------------\n";
     }
-
 }

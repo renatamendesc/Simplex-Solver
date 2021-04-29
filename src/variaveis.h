@@ -1,6 +1,11 @@
 #ifndef VARIAVEIS_H
 #define VARIAVEIS_H
 
+#include <iostream>
+
+using namespace std;
+
+// Classe refente às variaveis existentes
 class Variaveis {
 
     public:

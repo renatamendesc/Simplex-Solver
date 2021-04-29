@@ -5,6 +5,7 @@
 
 using namespace std;
 
+// Classe referente às variáveis que forem adicionadas na forma padrão (artificiais/folga)
 class VariaveisAdicionadas {
 
     public:
@@ -19,8 +20,8 @@ class VariaveisAdicionadas {
         int getRestricao();
 
     private:
-        string tipo;
-        int restricao;
+        string tipo; // Indica se a variável é folga ou artificial
+        int restricao; // Indica para qual restrição essa variável será adicionada
         int indice;
         float coeficiente;
 

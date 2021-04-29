@@ -10,23 +10,24 @@
 
 using namespace std;
 
+// Classe referente ao modelo em questão (na sua forma original)
 class Modelo {
     
     public:
         void setFuncaoObjetivo(string, vector <float>);
         void setRestricoes(string, float, vector <float>);
 
-        void verificaNegatividade();
-
         FuncaoObjetivo getFuncaoObjetivo();
         vector <Restricoes> getRestricoes();
+
+        void verificaNegatividade();
 
         void printFuncaoObjetivo();
         void printRestricoes();
 
     private:
         FuncaoObjetivo funcaoObjetivo;
-        vector <Restricoes> restricoes;   
+        vector <Restricoes> restricoes;
 
 };
 

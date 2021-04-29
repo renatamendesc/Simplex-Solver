@@ -1,7 +1,4 @@
 #include "funcaoObjetivo.h"
-#include <iostream>
-
-using namespace std;
 
 void FuncaoObjetivo::setTipo(string tipo){
     this->tipo = tipo;
@@ -15,8 +12,7 @@ void FuncaoObjetivo::setVariaveis(vector <float> coeficientes){
         variavel.setCoeficiente(coeficientes[i]);
 
         this->variaveis.push_back(variavel);
-    }
-    
+    } 
 }
 
 void FuncaoObjetivo::setSegundoMembro(float segundoMembro){

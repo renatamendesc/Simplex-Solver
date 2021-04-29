@@ -7,29 +7,24 @@
 
 using namespace std;
 
+// Classe para as restrições existentes no modelo:
 class Restricoes {
 
     public:
         void setRelacao(string);
         void setVariaveis(vector <float>);
-        void setVariaveisFolgas(int, int, int);
-        void setVariaveisArtificiais(int, int, int);
         void setSegundoMembro(float);
-
-        void inverteCoeficiente(int);
 
         string getRelacao();
         vector <Variaveis> getVariaveis();
-        Variaveis getVariaveisFolgas();
-        Variaveis getVariaveisArtificiais();
         float getSegundoMembro();
+
+        void inverteCoeficiente(int);
     
     private:
         string relacao;
         float segundoMembro;
         vector <Variaveis> variaveis;
-        Variaveis variaveisFolgas;
-        Variaveis variaveisArtificiais;
 
 };
 
