@@ -284,14 +284,15 @@ bool FormaPadrao::testeOtimalidade(){
             }
         }
 
-        // Verifica se o menor elemento é negativo:
+        // Caso esteja sendo realizado o metodo das duas fases
         if(duasFases && !segundaFase){
-            this->verificaSegundaFase();
+            this->verificaSegundaFase(); // verifica se variaveis artificiais são básicas ou não
             if(segundaFase){
                 continue;
             }
         }
-        
+
+        // Verifica se o menor elemento é negativo
         if(menor < 0){
             this->defineNovaBase(colunaPivo); // Se o menor elemento for negativo, continua simplex
         } else {
