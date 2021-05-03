@@ -542,51 +542,8 @@ void FormaPadrao::analiseSensibilidade(){
             if(matrizFolga[j][i] != 0){
                 limite = -(maoDireita[j])/matrizFolga[j][i];
 
-                if(limite < 0 && contadorNegativo == 0){
-                    maiorNegativo = limite;
-                    contadorNegativo++;
-
-                }else if(limite < 0 && limite > maiorNegativo){
-                    maiorNegativo = limite;
-
-                }
-
-                if(limite > 0 && contadorPositivo == 0){
-                    menorPositivo = limite;
-                    contadorPositivo++;
-
-                }else if(limite > 0 && limite < menorPositivo){
-                    menorPositivo = limite;
-
-                } 
             }
         }
-
-        limiteMaior[i] = menorPositivo;
-        limiteMenor[i] = maiorNegativo;
-
-    }
-
-    // Exibe os aumentos e reduções máximos para as variáveis de folga:
-    for(int i = 0; i < matrizFolga.size(); i++){
-        for(int j = 0; j < this->outrasVariaveis.size(); j++){
-            if(this->outrasVariaveis[j].getTipo() == "Folga"){
-
-                if(limiteMaior[i] ==  0){
-                    cout << "Aumento máximo para x_" << this->outrasVariaveis[j].getIndice() + i << ": Infinito " << endl;
-                }else{
-                    cout << "Aumento máximo para x_" << this->outrasVariaveis[j].getIndice() + i << ": " << limiteMaior[i] << endl;
-                }
-
-                if(limiteMenor[i] ==  0){
-                    cout << "Redução máxima para x_" << this->outrasVariaveis[j].getIndice() + i << ": Infinito " << endl;
-                }else{
-                    cout << "Redução máxima para x_" << this->outrasVariaveis[j].getIndice() + i << ": " << -limiteMenor[i] << endl;
-                }
-
-                break;
-            }
-        }  
     }   
 }
 
