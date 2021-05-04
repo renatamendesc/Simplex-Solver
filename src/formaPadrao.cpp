@@ -529,21 +529,56 @@ void FormaPadrao::analiseSensibilidade(){
         }
     }
 
-    vector <float> limiteMenor(matrizFolga.size()), limiteMaior(matrizFolga.size());
-    float limite;
+    vector <float> rangeMenor(matrizFolga.size()), rangeMaior(matrizFolga.size());
+    float range, finalRangePositivo = 0, finalRangeNegativo = 0;
+    int matrizFolgaLinhas = matrizFolga.size(), matrizFolgaColunas = matrizFolga[0].size();
 
     // Percorre todas restrições:
-    for(int i = 0; i < matrizFolga.size(); i++){
-        int contadorPositivo = 0, contadorNegativo = 0;
-        float maiorNegativo = 0, menorPositivo = 0;
-
-        for(int j = 0; j < matrizFolga.size(); j++){
+    for(int i = 0; i < matrizFolgaColunas; i++){
+        for(int j = 0; j < matrizFolgaLinhas; j++){
+            bool validacao = true;
             
             if(matrizFolga[j][i] != 0){
-                limite = -(maoDireita[j])/matrizFolga[j][i];
+                range = -(maoDireita[j]) / matrizFolga[j][i];
 
+                // Verifica se o valor é valido para todas expressões
+                for(int k = 0; k < matrizFolga.size(); k++){
+                    if(matrizFolga[k][i] * range + maoDireita[k] < 0){
+                        validacao = false;
+                        break;
+                    }
+                }
+            }
+
+            if(validacao){
+                if(range < 0 && range < finalRangeNegativo){
+                    finalRangeNegativo = range;
+
+                }else if(range > 0 && range > finalRangePositivo){
+                    finalRangePositivo = range;
+
+                }
             }
         }
+
+        rangeMenor[i] = finalRangeNegativo;
+        rangeMaior[i] = finalRangePositivo;
+
+    }
+
+    for(int i = 0; i < rangeMaior.size(); i++){
+        if(rangeMaior[i] == 0){
+            cout << "Aumento máximo para recurso " << i+1 << ": Infinito" << endl;
+        } else {
+            cout << "Aumento máximo para recurso " << i+1 << ": " << rangeMaior[i] << endl;
+        }
+
+        if(rangeMenor[i] == 0){
+            cout << "Redução máxima para recurso " << i+1 << ": Infinito" << endl;
+        } else {
+            cout << "Redução máxima para recurso " << i+1 << ": " << -rangeMenor[i] << endl;
+        }
+
     }   
 }
 
