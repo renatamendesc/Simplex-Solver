@@ -2,9 +2,7 @@
 #define MODELO_H
 
 #include "funcaoObjetivo.h"
-#include "funcaoObjetivo.cpp"
 #include "restricoes.h"
-#include "restricoes.cpp"
 #include <iostream>
 #include <vector>
 

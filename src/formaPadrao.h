@@ -5,7 +5,6 @@
 #include "funcaoObjetivo.h"
 #include "restricoes.h"
 #include "variaveisAdicionadas.h"
-#include "variaveisAdicionadas.cpp"
 #include <iostream>
 #include <vector>
 

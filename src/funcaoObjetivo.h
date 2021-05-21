@@ -2,7 +2,6 @@
 #define FUNCAO_OBJETIVO_H
 
 #include "variaveis.h"
-#include "variaveis.cpp"
 #include <iostream>
 #include <vector>
 
