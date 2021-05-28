@@ -276,6 +276,8 @@ bool FormaPadrao::testeOtimalidade(){
         float menor = DBL_MAX;
         int colunaPivo;
 
+        this->printTableau();
+
         // Verifica qual o menor elemento:
         for(int i = 0; i < tableau[0].size()-1; i++){
             if(tableau[0][i] < menor && !comparaFloat(tableau[0][i], menor)){
@@ -530,11 +532,14 @@ void FormaPadrao::analiseSensibilidade(){
     }
 
     vector <float> rangeMenor(matrizFolga.size()), rangeMaior(matrizFolga.size());
-    float range, finalRangePositivo = 0, finalRangeNegativo = 0;
+    float range = 0, finalRangePositivo = 0, finalRangeNegativo = 0;
     int matrizFolgaLinhas = matrizFolga.size(), matrizFolgaColunas = matrizFolga[0].size();
 
     // Percorre todas restrições:
     for(int i = 0; i < matrizFolgaColunas; i++){
+        finalRangeNegativo = 0;
+        finalRangePositivo = 0;
+
         for(int j = 0; j < matrizFolgaLinhas; j++){
             bool validacao = true;
             
@@ -548,6 +553,8 @@ void FormaPadrao::analiseSensibilidade(){
                         break;
                     }
                 }
+            }else{
+                validacao = false;
             }
 
             if(validacao){
@@ -556,17 +563,15 @@ void FormaPadrao::analiseSensibilidade(){
 
                 }else if(range > 0 && range > finalRangePositivo){
                     finalRangePositivo = range;
-
                 }
             }
         }
 
         rangeMenor[i] = finalRangeNegativo;
         rangeMaior[i] = finalRangePositivo;
-
     }
 
-    for(int i = 0; i < rangeMaior.size(); i++){
+    for(int i = 0; i < maoDireita.size(); i++){
         if(rangeMaior[i] == 0){
             cout << "Aumento máximo para recurso " << i+1 << ": Infinito" << endl;
         } else {
@@ -577,9 +582,8 @@ void FormaPadrao::analiseSensibilidade(){
             cout << "Redução máxima para recurso " << i+1 << ": Infinito" << endl;
         } else {
             cout << "Redução máxima para recurso " << i+1 << ": " << -rangeMenor[i] << endl;
-        }
-
-    }   
+        }   
+    }
 }
 
 bool FormaPadrao::comparaFloat(float a, float b){
