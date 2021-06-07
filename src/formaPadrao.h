@@ -23,7 +23,6 @@ class FormaPadrao {
         void setVariaveisBasicas(int, int);
 
         bool testeOtimalidade();
-        void verificaSegundaFase();
         void defineNovaBase(int);
         void atualizaTableau(int, int);
         void analiseSensibilidade();
@@ -40,12 +39,12 @@ class FormaPadrao {
 
         vector <int> variaveisBasicas;
         vector <int> variaveisNaoBasicas;
+        vector <int> colunasMatrizIdentidade;
         vector <VariaveisAdicionadas> outrasVariaveis; // Vector referente a variaveis de folga/artificias
 
         vector <vector <float>> tableau;
 
-        bool duasFases = false; // Indica se será realizado o metodo das duas fases para solucionar o problema
-        bool segundaFase = false; // Caso seja realizado o método das duas fases, indica se o tableau está na primeira ou segunda fase
+        bool bigM = false;
 
         int numeroFolgas = 0;
         int numeroArtificiais = 0;

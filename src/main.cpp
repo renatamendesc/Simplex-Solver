@@ -7,57 +7,14 @@
 using namespace std;
 
 void leitura(Modelo &modelo){
-    int numeroVariaveis, numeroRestricoes;
-    float coeficiente, coeficienteRestricao, segundoMembro;
-    vector <float> coeficientes, coeficientesRestricoes;
-    string tipo, relacao;
 
-    cout << "\n-------------------------------------RESOLVEDOR SIMPLEX-------------------------------------\n\n";
+    // Inicializa função objetivo do modelo
+    modelo.setFuncaoObjetivo("Min", {0.4, 0.5});
 
-    cout << "Informe o tipo da função objetivo [Max/Min]: ";
-    getline(cin, tipo);
-
-    cout << "Informe a quantidade de variáveis de decisão: ";
-    cin >> numeroVariaveis;
-
-    cout << "Informe os coeficientes das variáveis de decisão:\n";
-
-    for(int i = 0; i < numeroVariaveis; i++){
-
-        cout << "\t" << i+1 << ".Coeficiente de x_" << i+1 << ": ";
-        cin >> coeficiente;
-
-        coeficientes.push_back(coeficiente);
-    }
-
-    // Inicializa função objetivo do modelo 
-    modelo.setFuncaoObjetivo(tipo, coeficientes);
-
-    cout << "\nInforme a quantidade de restrições: ";
-    cin >> numeroRestricoes;
-
-    for(int i = 0; i < numeroRestricoes; i++){
-        cout << "\nInforme a relação da " << i+1 << "ª restrição [Menor ou igual / Igual / Maior ou igual]: ";
-
-        getchar();
-        getline(cin, relacao);
-
-        cout << "Informe o termo do lado direito da " << i+1 << "ª restrição: ";
-        cin >> segundoMembro;
-
-        for(int j = 0; j < numeroVariaveis; j++){
-            cout << "\t" << j+1 << ".Coeficiente de x_" << j+1 << " na " << i+1 <<"ª restrição: ";
-            cin >> coeficienteRestricao;
-
-            coeficientesRestricoes.push_back(coeficienteRestricao);
-        }
-
-        // Inicializa restricao em questao do modelo
-        modelo.setRestricoes(relacao, segundoMembro, coeficientesRestricoes);
-        coeficientesRestricoes.clear();
-    }
-
-    cout << "\n-------------------------------------------------------------------------------------------\n";
+    // Inicializa restricoes do modelo
+    modelo.setRestricoes("Menor ou igual", 2.7, {0.3, 0.1});
+    modelo.setRestricoes("Igual", 6, {0.5, 0.5});
+    modelo.setRestricoes("Maior ou igual", 6, {0.6, 0.4});
 
 }
 
@@ -66,10 +23,11 @@ int main(void){
     vector <int> indicesVariaveisBasicas, indicesVariaveisNaoBasicas;
     bool verificacao = false;
 
-    Modelo modelo;
-
     // Realiza a leitura do modelo:
+    Modelo modelo;
     leitura(modelo);
+
+    cout << "\n------------------------------------ RESOLVEDOR SIMPLEX ------------------------------------\n";
 
     // Exibe o modelo:
     modelo.printFuncaoObjetivo();
