@@ -1,10 +1,12 @@
 #include "variaveisAdicionadas.h"
 
+using namespace std;
+
 void VariaveisAdicionadas::setIndice(int i){
     this->indice = i;
 }
 
-void VariaveisAdicionadas::setCoeficiente(float c){
+void VariaveisAdicionadas::setCoeficiente(double c){
     this->coeficiente = c;
 }
 
@@ -24,7 +26,7 @@ int VariaveisAdicionadas::getIndice(){
     return this->indice;
 }
 
-float VariaveisAdicionadas::getCoeficiente(){
+double VariaveisAdicionadas::getCoeficiente(){
     return this->coeficiente;
 }
 

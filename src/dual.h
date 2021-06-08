@@ -5,26 +5,24 @@
 #include <iostream>
 #include <vector>
 
-using namespace std;
-
 class Dual {
-    
-    public:
-        void setFuncaoObjetivo(string, vector <float>);
-        void setRestricoes(string, float, vector <float>);
-
-        FuncaoObjetivo getFuncaoObjetivo();
-        vector <Restricoes> getRestricoes();
-
-        void printFuncaoObjetivo();
-        void printRestricoes();
-
-        Dual(Modelo);
 
     private:
         FuncaoObjetivo funcaoObjetivo;
-        vector <Restricoes> restricoes;
-        vector <string> restricoesVariaveis;  
+        std::vector <Restricoes> restricoes;
+        std::vector <std::string> restricoesVariaveis;  
+    
+    public:
+        Dual(Modelo);
+
+        void setFuncaoObjetivo(std::string, std::vector <double>);
+        void setRestricoes(std::string, double, std::vector <double>);
+
+        FuncaoObjetivo getFuncaoObjetivo();
+        std::vector <Restricoes> getRestricoes();
+
+        void printFuncaoObjetivo();
+        void printRestricoes();
 
 };
 

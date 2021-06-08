@@ -2,22 +2,36 @@
 #define FORMA_PADRAO_H
 
 #include "modelo.h"
-#include "funcaoObjetivo.h"
-#include "restricoes.h"
 #include "variaveisAdicionadas.h"
 #include <iostream>
 #include <vector>
 
-using namespace std;
-
 class FormaPadrao {
+
+    private:
+        FuncaoObjetivo funcaoObjetivo;
+        std::vector <Restricoes> restricoes;
+
+        std::vector <int> variaveisBasicas;
+        std::vector <int> variaveisNaoBasicas;
+        std::vector <VariaveisAdicionadas> outrasVariaveis; // Vector referente a variaveis de folga/artificias
+
+        std::vector <std::vector <double>> tableau;
+        std::vector <int> colunasMatrizIdentidade;
+
+        bool bigM = false;
+
+        int numeroFolgas = 0;
+        int numeroArtificiais = 0;
+
+        int iter = 0;
 
     public:
         FormaPadrao(Modelo);
 
-        float getValorOtimo();
+        double getValorOtimo();
         int getIteracoes();
-        void getSolucaoOtima(vector <float> &, vector <float> &, vector <int> &, vector <int> &);
+        void getSolucaoOtima(std::vector <double> &, std::vector <double> &, std::vector <int> &, std::vector <int> &);
 
         void setTableau();
         void setVariaveisBasicas(int, int);
@@ -27,29 +41,12 @@ class FormaPadrao {
         void atualizaTableau(int, int);
         void analiseSensibilidade();
 
-        bool comparaFloat(float a, float b);
+        bool comparaDouble(double a, double b);
 
         void printTableau();
         void printFuncaoObjetivo();
         void printRestricoes();
 
-    private:
-        FuncaoObjetivo funcaoObjetivo;
-        vector <Restricoes> restricoes;
-
-        vector <int> variaveisBasicas;
-        vector <int> variaveisNaoBasicas;
-        vector <int> colunasMatrizIdentidade;
-        vector <VariaveisAdicionadas> outrasVariaveis; // Vector referente a variaveis de folga/artificias
-
-        vector <vector <float>> tableau;
-
-        bool bigM = false;
-
-        int numeroFolgas = 0;
-        int numeroArtificiais = 0;
-
-        int iteracoes = 0;
 };
 
 #endif

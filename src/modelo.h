@@ -6,26 +6,24 @@
 #include <iostream>
 #include <vector>
 
-using namespace std;
-
 // Classe referente ao modelo em questão (na sua forma original)
 class Modelo {
+
+    private:
+        FuncaoObjetivo funcaoObjetivo;
+        std::vector <Restricoes> restricoes;
     
     public:
-        void setFuncaoObjetivo(string, vector <float>);
-        void setRestricoes(string, float, vector <float>);
+        void setFuncaoObjetivo(std::string, std::vector <double>);
+        void setRestricoes(std::string, double, std::vector <double>);
 
         FuncaoObjetivo getFuncaoObjetivo();
-        vector <Restricoes> getRestricoes();
+        std::vector <Restricoes> getRestricoes();
 
         void verificaNegatividade();
 
         void printFuncaoObjetivo();
         void printRestricoes();
-
-    private:
-        FuncaoObjetivo funcaoObjetivo;
-        vector <Restricoes> restricoes;
 
 };
 

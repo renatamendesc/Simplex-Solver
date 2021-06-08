@@ -1,10 +1,12 @@
 #include "dual.h"
 
+using namespace std;
+
 // Construtor que transforma primal no dual
 Dual::Dual(Modelo primal){
     int numeroVariaveis, numeroRestricoes;
-    float coeficiente, coeficienteRestricao, segundoMembro;
-    vector <float> coeficientes, coeficientesRestricoes;
+    double coeficiente, coeficienteRestricao, segundoMembro;
+    vector <double> coeficientes, coeficientesRestricoes;
     string tipo, relacao;
 
     // Define tipo do dual
@@ -78,14 +80,14 @@ Dual::Dual(Modelo primal){
     }
 }
 
-void Dual::setFuncaoObjetivo(string tipo, vector <float> coeficientes){
+void Dual::setFuncaoObjetivo(string tipo, vector <double> coeficientes){
     
     this->funcaoObjetivo.setTipo(tipo);
     this->funcaoObjetivo.setVariaveis(coeficientes);
 
 }
 
-void Dual::setRestricoes(string relacao, float segundoMembro, vector <float> coeficientes){
+void Dual::setRestricoes(string relacao, double segundoMembro, vector <double> coeficientes){
 
     Restricoes restricao;
 

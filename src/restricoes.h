@@ -5,26 +5,24 @@
 #include <iostream>
 #include <vector>
 
-using namespace std;
-
 // Classe para as restrições existentes no modelo:
 class Restricoes {
 
-    public:
-        void setRelacao(string);
-        void setVariaveis(vector <float>);
-        void setSegundoMembro(float);
+    private:
+        std::vector <Variaveis> variaveis;
+        std::string relacao;
+        double segundoMembro;
 
-        string getRelacao();
-        vector <Variaveis> getVariaveis();
-        float getSegundoMembro();
+    public:
+        void setVariaveis(std::vector <double>);
+        void setRelacao(std::string);
+        void setSegundoMembro(double);
+
+        std::vector <Variaveis> getVariaveis();
+        std::string getRelacao();
+        double getSegundoMembro();
 
         void inverteCoeficiente(int);
-    
-    private:
-        string relacao;
-        float segundoMembro;
-        vector <Variaveis> variaveis;
 
 };
 

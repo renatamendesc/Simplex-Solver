@@ -3,21 +3,19 @@
 
 #include <iostream>
 
-using namespace std;
-
 // Classe refente às variaveis existentes
 class Variaveis {
 
-    public:
-        void setIndice(int);
-        void setCoeficiente(float);
-        
-        int getIndice();
-        float getCoeficiente();
-
     private:
         int indice;
-        float coeficiente;
+        double coeficiente;
+
+    public:
+        void setIndice(int);
+        void setCoeficiente(double);
+        
+        int getIndice();
+        double getCoeficiente();
 
 };
 

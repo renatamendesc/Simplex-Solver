@@ -1,10 +1,12 @@
 #include "restricoes.h"
 
+using namespace std;
+
 void Restricoes::setRelacao(string relacao){
     this->relacao = relacao;
 }
 
-void Restricoes::setVariaveis(vector <float> coeficientes){
+void Restricoes::setVariaveis(vector <double> coeficientes){
     Variaveis variavel;
 
     variaveis.clear();
@@ -20,7 +22,7 @@ void Restricoes::inverteCoeficiente(int indice){
     this->variaveis[indice].setCoeficiente(-(this->variaveis[indice].getCoeficiente()));
 }
 
-void Restricoes::setSegundoMembro(float segundoMembro){
+void Restricoes::setSegundoMembro(double segundoMembro){
     this->segundoMembro = segundoMembro;
 }
 
@@ -32,6 +34,6 @@ string Restricoes::getRelacao(){
     return this->relacao;
 }
 
-float Restricoes::getSegundoMembro(){
+double Restricoes::getSegundoMembro(){
     return this->segundoMembro;
 }

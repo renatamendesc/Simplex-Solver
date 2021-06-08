@@ -1,11 +1,13 @@
 #include "formaPadrao.h"
 #include <cfloat>
 
+using namespace std;
+
 #define BIG_M 99999
 
 // Construtor que transforma modelo original na sua forma padrao
 FormaPadrao::FormaPadrao(Modelo formaOriginal){
-    vector <float> coeficientes;
+    vector <double> coeficientes;
     VariaveisAdicionadas novaVariavel;
     Restricoes restricao;
     int somador = 0;
@@ -153,7 +155,7 @@ FormaPadrao::FormaPadrao(Modelo formaOriginal){
 }
 
 void FormaPadrao::setTableau(){
-    vector <float> linha, coeficientesSoma;
+    vector <double> linha, coeficientesSoma;
     vector <Restricoes> restricaoSoma;
     Restricoes resultante;
 
@@ -247,16 +249,12 @@ void FormaPadrao::setVariaveisBasicas(int colunaPivo, int linhaPivo){
 bool FormaPadrao::testeOtimalidade(){
 
     while(true){
-        iteracoes++;
-
-        float menor = DBL_MAX;
+        double menor = DBL_MAX;
         int colunaPivo;
-
-        //this->printTableau();
 
         // Verifica qual o menor elemento:
         for(int i = 0; i < tableau[0].size()-1; i++){
-            if(tableau[0][i] < menor && !comparaFloat(tableau[0][i], menor)){
+            if(tableau[0][i] < menor && !comparaDouble(tableau[0][i], menor)){
                 menor = tableau[0][i];
                 colunaPivo = i;
             }
@@ -265,14 +263,17 @@ bool FormaPadrao::testeOtimalidade(){
         // Verifica se o menor elemento é negativo
         if(menor < 0){
             this->defineNovaBase(colunaPivo); // Se o menor elemento for negativo, continua simplex
+            this->iter++;
+
         } else {
             return true; // Se o menor elemento for positivo, solução otima foi encontrada
+
         }
     }
 }
 
 void FormaPadrao::defineNovaBase(int colunaPivo){
-    float menor = DBL_MAX, resultado = DBL_MAX;
+    double menor = DBL_MAX, resultado = DBL_MAX;
     int linhaPivo;
 
     // Verifica a linha pivô
@@ -286,7 +287,7 @@ void FormaPadrao::defineNovaBase(int colunaPivo){
             menor = resultado;
             linhaPivo = i;
 
-        } else if(resultado < menor && resultado >= 0){
+        } else if((resultado < menor && !comparaDouble(resultado, menor)) && resultado >= 0 ){
             menor = resultado;
             linhaPivo = i;
 
@@ -300,7 +301,7 @@ void FormaPadrao::defineNovaBase(int colunaPivo){
 }
 
 void FormaPadrao::atualizaTableau(int colunaPivo, int linhaPivo){
-    float elementoPivo = this->tableau[linhaPivo][colunaPivo];
+    double elementoPivo = this->tableau[linhaPivo][colunaPivo];
 
     // Atualiza nova linha pivô
     for(int i = 0; i < this->tableau[linhaPivo].size(); i++){
@@ -310,12 +311,99 @@ void FormaPadrao::atualizaTableau(int colunaPivo, int linhaPivo){
     // Atualiza as demais linhas
     for(int i = 0; i < this->tableau.size(); i++){
         if(i != linhaPivo){
-            float elemento = -this->tableau[i][colunaPivo];
+            double elemento = -this->tableau[i][colunaPivo];
 
             for(int j = 0; j < this->tableau[i].size(); j++){
                 this->tableau[i][j] = (elemento * this->tableau[linhaPivo][j]) + this->tableau[i][j];
             }
         }
+    }
+}
+
+void FormaPadrao::analiseSensibilidade(){
+    vector <vector <double>> matrizFolga;
+    vector <double> linhas, maoDireita;
+
+    // Percorre linhas do tableau:
+    for(int i = 1; i < this->tableau.size(); i++){
+        // Percorre elementos da linha (colunas):
+        for(int j = 0; j < this->tableau[i].size(); j++){
+            for(int k = 0; k < this->colunasMatrizIdentidade.size(); k++){
+
+                // Verifica se a coluna em questão é referente a matriz identidade inicial
+                if(j == this->colunasMatrizIdentidade[k]){
+                    linhas.push_back(this->tableau[i][j]);
+                }
+            }
+        }
+
+        // Adiciona na matriz referente às variaveis de folga
+        matrizFolga.push_back(linhas);
+        linhas.clear();
+    }
+
+    // Adiciona valores no vetor da mão direita:
+    for(int i = 1; i < tableau.size(); i++){
+        for(int j = 0; j < tableau[i].size(); j++){
+            if(j == this->tableau[i].size()-1){
+                maoDireita.push_back(this->tableau[i][j]);
+            }
+        }
+    }
+
+    vector <double> rangeMenor(matrizFolga.size()), rangeMaior(matrizFolga.size());
+    double range = 0, finalRangePositivo = 0, finalRangeNegativo = 0;
+    int matrizFolgaLinhas = matrizFolga.size(), matrizFolgaColunas = matrizFolga[0].size();
+
+    // Percorre todas restrições:
+    for(int i = 0; i < matrizFolgaColunas; i++){
+        finalRangeNegativo = 0;
+        finalRangePositivo = 0;
+
+        for(int j = 0; j < matrizFolgaLinhas; j++){
+            bool validacao = true;
+            
+            if(matrizFolga[j][i] != 0){
+                range = -(maoDireita[j]) / matrizFolga[j][i];
+
+                // Verifica se o valor é valido para todas expressões
+                for(int k = 0; k < matrizFolga.size(); k++){
+                    if(matrizFolga[k][i] * range + maoDireita[k] < 0){
+                        validacao = false;
+                        break;
+                    }
+                }
+
+            }else{
+                validacao = false;
+            }
+
+            if(validacao){
+                if(range < 0 && range < finalRangeNegativo){
+                    finalRangeNegativo = range;
+
+                }else if(range > 0 && range > finalRangePositivo){
+                    finalRangePositivo = range;
+                }
+            }
+        }
+
+        rangeMenor[i] = finalRangeNegativo;
+        rangeMaior[i] = finalRangePositivo;
+    }
+
+    for(int i = 0; i < maoDireita.size(); i++){
+        if(rangeMaior[i] == 0){
+            cout << "Aumento máximo para recurso " << i+1 << ": Infinito" << endl;
+        } else {
+            cout << "Aumento máximo para recurso " << i+1 << ": " << rangeMaior[i] << endl;
+        }
+
+        if(rangeMenor[i] == 0){
+            cout << "Redução máxima para recurso " << i+1 << ": Infinito" << endl;
+        } else {
+            cout << "Redução máxima para recurso " << i+1 << ": " << -rangeMenor[i] << endl;
+        }   
     }
 }
 
@@ -381,7 +469,7 @@ void FormaPadrao::printRestricoes(){
     cout << endl;
 }
 
-float FormaPadrao::getValorOtimo(){
+double FormaPadrao::getValorOtimo(){
 
     if(funcaoObjetivo.getTipo() == "Max"){
         return this->tableau[0][tableau[0].size()-1];
@@ -391,7 +479,7 @@ float FormaPadrao::getValorOtimo(){
     
 }
 
-void FormaPadrao::getSolucaoOtima(vector <float> &solucaoVariaveisBasicas, vector <float> &solucaoVariaveisNaoBasicas, vector <int> &indicesVariaveisBasicas, vector <int> &indicesVariaveisNaoBasicas){
+void FormaPadrao::getSolucaoOtima(vector <double> &solucaoVariaveisBasicas, vector <double> &solucaoVariaveisNaoBasicas, vector <int> &indicesVariaveisBasicas, vector <int> &indicesVariaveisNaoBasicas){
 
     for(int i = 0; i < this->variaveisNaoBasicas.size(); i++){
         for(int j = 0; j < this->funcaoObjetivo.getVariaveis().size(); j++){
@@ -413,98 +501,12 @@ void FormaPadrao::getSolucaoOtima(vector <float> &solucaoVariaveisBasicas, vecto
 }
 
 int FormaPadrao::getIteracoes(){
-    return this->iteracoes;
+    return this->iter;
 }
 
-void FormaPadrao::analiseSensibilidade(){
-    vector <vector <float>> matrizFolga;
-    vector <float> linhas, maoDireita;
+bool FormaPadrao::comparaDouble(double a, double b){
 
-    // Percorre linhas do tableau:
-    for(int i = 1; i < this->tableau.size(); i++){
-        // Percorre elementos da linha (colunas):
-        for(int j = 0; j < this->tableau[i].size(); j++){
-            for(int k = 0; k < this->colunasMatrizIdentidade.size(); k++){
-
-                // Verifica se a coluna em questão é referente a matriz identidade inicial
-                if(j == this->colunasMatrizIdentidade[k]){
-                    linhas.push_back(this->tableau[i][j]);
-                }
-            }
-        }
-
-        // Adiciona na matriz referente às variaveis de folga
-        matrizFolga.push_back(linhas);
-        linhas.clear();
-    }
-
-    // Adiciona valores no vetor da mão direita:
-    for(int i = 1; i < tableau.size(); i++){
-        for(int j = 0; j < tableau[i].size(); j++){
-            if(j == this->tableau[i].size()-1){
-                maoDireita.push_back(this->tableau[i][j]);
-            }
-        }
-    }
-
-    vector <float> rangeMenor(matrizFolga.size()), rangeMaior(matrizFolga.size());
-    float range = 0, finalRangePositivo = 0, finalRangeNegativo = 0;
-    int matrizFolgaLinhas = matrizFolga.size(), matrizFolgaColunas = matrizFolga[0].size();
-
-    // Percorre todas restrições:
-    for(int i = 0; i < matrizFolgaColunas; i++){
-        finalRangeNegativo = 0;
-        finalRangePositivo = 0;
-
-        for(int j = 0; j < matrizFolgaLinhas; j++){
-            bool validacao = true;
-            
-            if(matrizFolga[j][i] != 0){
-                range = -(maoDireita[j]) / matrizFolga[j][i];
-
-                // Verifica se o valor é valido para todas expressões
-                for(int k = 0; k < matrizFolga.size(); k++){
-                    if(matrizFolga[k][i] * range + maoDireita[k] < 0){
-                        validacao = false;
-                        break;
-                    }
-                }
-            }else{
-                validacao = false;
-            }
-
-            if(validacao){
-                if(range < 0 && range < finalRangeNegativo){
-                    finalRangeNegativo = range;
-
-                }else if(range > 0 && range > finalRangePositivo){
-                    finalRangePositivo = range;
-                }
-            }
-        }
-
-        rangeMenor[i] = finalRangeNegativo;
-        rangeMaior[i] = finalRangePositivo;
-    }
-
-    for(int i = 0; i < maoDireita.size(); i++){
-        if(rangeMaior[i] == 0){
-            cout << "Aumento máximo para recurso " << i+1 << ": Infinito" << endl;
-        } else {
-            cout << "Aumento máximo para recurso " << i+1 << ": " << rangeMaior[i] << endl;
-        }
-
-        if(rangeMenor[i] == 0){
-            cout << "Redução máxima para recurso " << i+1 << ": Infinito" << endl;
-        } else {
-            cout << "Redução máxima para recurso " << i+1 << ": " << -rangeMenor[i] << endl;
-        }   
-    }
-}
-
-bool FormaPadrao::comparaFloat(float a, float b){
-
-    float epsilon = 0.001;
+    double epsilon = 0.001;
     return abs(a - b) < epsilon;
 
 }

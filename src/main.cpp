@@ -6,7 +6,7 @@
 
 using namespace std;
 
-void leitura(Modelo &modelo){
+void inicializacao(Modelo &modelo){
 
     // Inicializa função objetivo do modelo
     modelo.setFuncaoObjetivo("Min", {0.4, 0.5});
@@ -15,17 +15,17 @@ void leitura(Modelo &modelo){
     modelo.setRestricoes("Menor ou igual", 2.7, {0.3, 0.1});
     modelo.setRestricoes("Igual", 6, {0.5, 0.5});
     modelo.setRestricoes("Maior ou igual", 6, {0.6, 0.4});
-
+    
 }
 
 int main(void){
-    vector <float> solucaoVariaveisBasicas, solucaoVariaveisNaoBasicas;
+    vector <double> solucaoVariaveisBasicas, solucaoVariaveisNaoBasicas;
     vector <int> indicesVariaveisBasicas, indicesVariaveisNaoBasicas;
     bool verificacao = false;
 
     // Realiza a leitura do modelo:
     Modelo modelo;
-    leitura(modelo);
+    inicializacao(modelo);
 
     cout << "\n------------------------------------ RESOLVEDOR SIMPLEX ------------------------------------\n";
 

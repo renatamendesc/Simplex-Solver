@@ -1,5 +1,7 @@
 #include "modelo.h"
 
+using namespace std;
+
 FuncaoObjetivo Modelo::getFuncaoObjetivo(){
     return this->funcaoObjetivo;
 }
@@ -8,14 +10,14 @@ vector <Restricoes> Modelo::getRestricoes(){
     return this->restricoes;
 }
 
-void Modelo::setFuncaoObjetivo(string tipo, vector <float> coeficientes){
+void Modelo::setFuncaoObjetivo(string tipo, vector <double> coeficientes){
     
     this->funcaoObjetivo.setTipo(tipo); // Estabelece o tipo da função como minimização ou maximização
     this->funcaoObjetivo.setVariaveis(coeficientes); // Estabelece as variáveis existentes na função objetivo
 
 }
 
-void Modelo::setRestricoes(string relacao, float segundoMembro, vector <float> coeficientes){
+void Modelo::setRestricoes(string relacao, double segundoMembro, vector <double> coeficientes){
 
     Restricoes restricao;
 
