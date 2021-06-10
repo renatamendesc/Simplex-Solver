@@ -239,7 +239,6 @@ void FormaPadrao::setVariaveisBasicas(int colunaPivo, int linhaPivo){
     // Verifica se está na primeira ou segunda fase do método das duas fases
     this->variaveisBasicas[linhaPivo-1] = entraBase;
     
-    
     // Atualiza vectores de variaveis basicas e não básicas
     this->variaveisNaoBasicas.push_back(saiBase);
     this->variaveisNaoBasicas.erase(variaveisNaoBasicas.begin() + indiceSai);
@@ -281,7 +280,7 @@ void FormaPadrao::defineNovaBase(int colunaPivo){
 
         if(this->tableau[i][colunaPivo] != 0){
             resultado = this->tableau[i][tableau[i].size()-1] / this->tableau[i][colunaPivo];
-        }        
+        }
 
         if(menor == DBL_MAX){
             menor = resultado;
@@ -352,15 +351,14 @@ void FormaPadrao::analiseSensibilidade(){
     }
 
     vector <double> rangeMenor(matrizFolga.size()), rangeMaior(matrizFolga.size());
-    double range = 0, finalRangePositivo = 0, finalRangeNegativo = 0;
-    int matrizFolgaLinhas = matrizFolga.size(), matrizFolgaColunas = matrizFolga[0].size();
+    double range = 0, finalRangePositivo, finalRangeNegativo;
 
     // Percorre todas restrições:
-    for(int i = 0; i < matrizFolgaColunas; i++){
+    for(int i = 0; i < matrizFolga.size(); i++){
         finalRangeNegativo = 0;
         finalRangePositivo = 0;
 
-        for(int j = 0; j < matrizFolgaLinhas; j++){
+        for(int j = 0; j < matrizFolga.size(); j++){
             bool validacao = true;
             
             if(matrizFolga[j][i] != 0){
@@ -368,7 +366,9 @@ void FormaPadrao::analiseSensibilidade(){
 
                 // Verifica se o valor é valido para todas expressões
                 for(int k = 0; k < matrizFolga.size(); k++){
-                    if(matrizFolga[k][i] * range + maoDireita[k] < 0){
+                    double verificacao = matrizFolga[k][i] * range + maoDireita[k];
+
+                    if(verificacao < 0 && !comparaDouble(verificacao, 0)){
                         validacao = false;
                         break;
                     }
@@ -393,11 +393,12 @@ void FormaPadrao::analiseSensibilidade(){
     }
 
     for(int i = 0; i < maoDireita.size(); i++){
+
         if(rangeMaior[i] == 0){
             cout << "Aumento máximo para recurso " << i+1 << ": Infinito" << endl;
         } else {
             cout << "Aumento máximo para recurso " << i+1 << ": " << rangeMaior[i] << endl;
-        }
+        };
 
         if(rangeMenor[i] == 0){
             cout << "Redução máxima para recurso " << i+1 << ": Infinito" << endl;

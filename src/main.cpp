@@ -9,13 +9,13 @@ using namespace std;
 void inicializacao(Modelo &modelo){
 
     // Inicializa função objetivo do modelo
-    modelo.setFuncaoObjetivo("Min", {0.4, 0.5});
+    modelo.setFuncaoObjetivo("Max", {3, 5});
 
     // Inicializa restricoes do modelo
-    modelo.setRestricoes("Menor ou igual", 2.7, {0.3, 0.1});
-    modelo.setRestricoes("Igual", 6, {0.5, 0.5});
-    modelo.setRestricoes("Maior ou igual", 6, {0.6, 0.4});
-    
+    modelo.setRestricoes("Menor ou igual", 4, {1, 0});
+    modelo.setRestricoes("Menor ou igual", 12, {0, 2});
+    modelo.setRestricoes("Igual", 18, {3, 2});
+
 }
 
 int main(void){
