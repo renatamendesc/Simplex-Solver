@@ -11,13 +11,9 @@ modelo.setFuncaoObjetivo((TIPO DE FUNÇÃO OBJETIVO), (COEFICIENTES));
 // Inicializa restricoes do modelo
 modelo.setRestricoes((TIPO DE RESTRIÇÃO), (LADO DIREITO), (COEFICIENTES));
 ```
-**Exemplo de inicialização de um modelo**
+**Exemplo de inicialização de um modelo:**
 
 Como exemplo, para resolver o seguinte modelo:
-
-<!---
-
--->
 
 ![image](https://cdn.discordapp.com/attachments/806262947160653834/854752706090631208/WhatsApp_Image_2021-06-08_at_13.03.04_1.jpg)
 
