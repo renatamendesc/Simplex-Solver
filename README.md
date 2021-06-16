@@ -1,5 +1,5 @@
 # Resolvedor Simplex
-O método Simplex é um algoritmo utilizado para solucionar problemas de Programação Linear, buscando a solução ótima, seja ela de maximização ou minimização de determinado recurso, a cada iteração realizada. Na prática, o Simplex percorre vértices de um gráfico que representa a região de soluções viáveis do problema indicado, retornando o melhor resultado encontrado. Sendo assim, se trata de um método exato para resolução de **problemas de otimização**.
+O método Simplex é um algoritmo utilizado para solucionar problemas de Programação Linear, buscando a solução ótima, seja ela de maximização ou de minimização, a cada iteração realizada. Na prática, o Simplex percorre vértices de um gráfico que representa a região de soluções viáveis do problema indicado, retornando o melhor resultado encontrado. Sendo assim, se trata de um método exato para resolução de **problemas de otimização**.
 
 ## Funcionamento:
 Para utilizar o programa, é necessário indicar um modelo de Programação Linear válido, determinando sua função objetivo (indicando se é um problema de maximização ou minimização) e informando as restrições do problema a serem respeitadas.
