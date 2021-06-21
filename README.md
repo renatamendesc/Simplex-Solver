@@ -7,10 +7,10 @@ To run the program, it's necessary to indicate a Linear Programming model, indic
 
 ``` 
 // Inicializa função objetivo do modelo
-modelo.setFuncaoObjetivo((TIPO DE FUNÇÃO OBJETIVO), (COEFICIENTES));
+modelo.setFuncaoObjetivo((OBJECTIVE FUNCTION TYPE), (COEFFICIENTS));
 
 // Inicializa restricoes do modelo
-modelo.setRestricoes((TIPO DE RESTRIÇÃO), (LADO DIREITO), (COEFICIENTES));
+modelo.setRestricoes((CONSTRAINT TYPE), (RIGHT HAND SIDE), (COEFFICIENTS));
 ```
 **Initializing a model:**
 
