@@ -32,5 +32,5 @@ modelo.setRestricoes("Menor ou igual", 12, {0, 2});
 modelo.setRestricoes("Igual", 18, {3, 2});
 ```
 
-## Resuls
+## Results
 Finally, you should just run the program with the ```./main``` command and the solution will be shown. Also, the algorithm can do the **sensitivity analysis** of the maximum increase and decrease allowed to the resources used, without changing the solution (modifying only the objective function's result).
